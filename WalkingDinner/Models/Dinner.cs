@@ -21,7 +21,7 @@ namespace WalkingDinner.Models {
 
         public string Location { get; set; }
 
-        [System.ComponentModel.DataAnnotations.DataType( DataType.DateTime )]
+        [DataType( DataType.DateTime )]
         public DateTime Date { get; set; }
 
         [DataType( DataType.DateTime )]

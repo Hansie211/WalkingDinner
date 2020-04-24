@@ -1,12 +1,14 @@
 ﻿@page
-@model IndexModel
+@model Pages.IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
     <div class="text-center">
         <h1 class="display-4">Welcome</h1>
-        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-        <p>Learn about <a class="navbar-brand" asp-page="Setup">WalkingDinner</a>.</p>
-        <p>Learn about <a class="navbar-brand" asp-page="Management" asp-route-AdminCode="TEST">WalkingDinner</a>.</p>
+
+        <p><a class="navbar-brand" asp-page="CreateNew">Create a new dinner</a>.</p>
+
+        @*<p><a class="navbar-brand" asp-page="Management" asp-route-AdminCode="uLVpjTzPH9Ve2ct5Q7hfkXoY5OfqVIHLHAg7iEUx" asp-route-DinnerID="1">Admin Page</a></p>
+        <p><a class="navbar-brand" asp-page="Overview" asp-route-AccessCode="RDAO-peuuDSf75I4-Qld1Kul-awu-vJ8eS0NdY-C" asp-route-DinnerID="1">Overview Page</a></p>*@
     </div>

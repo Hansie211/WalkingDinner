@@ -1,0 +1,99 @@
+﻿@page
+@model CreateNew
+@using WalkingDinner.Extensions
+@{
+    ViewData[ "Title" ] = "Setup page";
+}
+
+<h1>Create</h1>
+
+<h4>Dinner</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Title" class="control-label"></label>
+                <input asp-for="Dinner.Title" class="form-control" />
+                <span asp-validation-for="Dinner.Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Description" class="control-label"></label>
+                <input asp-for="Dinner.Description" class="form-control" />
+                <span asp-validation-for="Dinner.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Location" class="control-label"></label>
+                <input asp-for="Dinner.Location" class="form-control" />
+                <span asp-validation-for="Dinner.Location" class="text-danger"></span>
+            </div>
+
+            @*min="@DateTime.Now.AddDays( 14 ).SetTime( 0, 0 ).ToString( "yyyy-MM-dd HH:mm" )"*@
+
+            <div class="form-group">
+                <label asp-for="Dinner.Date" class="control-label"></label>
+                <input asp-for="Dinner.Date" class="form-control" />
+                <span asp-validation-for="Dinner.Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.SubscriptionStop" class="control-label"></label>
+                <input asp-for="Dinner.SubscriptionStop" class="form-control" />
+                <span asp-validation-for="Dinner.SubscriptionStop" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Price" class="control-label"></label>
+                <input asp-for="Dinner.Price" class="form-control" />
+                <span asp-validation-for="Dinner.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.IBAN" class="control-label"></label>
+                <input asp-for="Dinner.IBAN" class="form-control" />
+                <span asp-validation-for="Dinner.IBAN" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.AdminEmailAddress" class="control-label"></label>
+                <input asp-for="Dinner.AdminEmailAddress" class="form-control" />
+                <span asp-validation-for="Dinner.AdminEmailAddress" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Admin.FirstName" class="control-label"></label>
+                <input asp-for="Dinner.Admin.FirstName" class="form-control" />
+                <span asp-validation-for="Dinner.Admin.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Admin.Preposition" class="control-label"></label>
+                <input asp-for="Dinner.Admin.Preposition" class="form-control" />
+                <span asp-validation-for="Dinner.Admin.Preposition" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Dinner.Admin.LastName" class="control-label"></label>
+                <input asp-for="Dinner.Admin.LastName" class="form-control" />
+                <span asp-validation-for="Dinner.Admin.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync( "_ValidationScriptsPartial" );}
+}

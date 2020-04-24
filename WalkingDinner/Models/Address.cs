@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace WalkingDinner.Models {
     public class Address {
 
-        [Key]
+        [DatabaseGenerated( DatabaseGeneratedOption.Identity )]
         public int ID { get; set; }
 
         public string Street { get; set; }

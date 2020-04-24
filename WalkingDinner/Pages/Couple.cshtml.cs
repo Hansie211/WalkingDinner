@@ -6,10 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WalkingDinner.Pages {
-    public class OverviewModel : PageModel {
+
+    public class CoupleModel : PageModel {
 
         [BindProperty( SupportsGet = true )]
-        public string DinnerCode { get; set; }
+        public string CoupleID { get; set; }
+
+        [BindProperty( SupportsGet = true )]
+        public string AccessCode { get; set; }
+
 
         public void OnGet() {
 

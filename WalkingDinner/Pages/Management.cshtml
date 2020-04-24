@@ -1,9 +1,120 @@
-﻿@page "/manage/{AdminCode}"
-@model WalkingDinner.Pages.ManagementModel
+﻿@page "/manage/{DinnerID}/{AdminCode}/{handler?}"
+@model Pages.Demo.ManagementModel
 @{
-    ViewData["Title"] = "Management";
+    ViewData[ "Title" ] = "Management";
 }
 
 <h1>Management</h1>
 
 <h3>@Model.AdminCode</h3>
+
+<h3>Uitnodigen</h3>
+<form class="form-horizontal" method="post" asp-page-handler="Invite">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Invite.FirstName" class="col-sm-2 control-label">Voornaam</label>
+        <input asp-for="Invite.FirstName" class="form-control" />
+        <span asp-validation-for="Invite.FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Invite.Preposition" class="col-sm-2 control-label">Tussenvoegsel</label>
+        <input asp-for="Invite.Preposition" class="form-control" />
+        <span asp-validation-for="Invite.Preposition" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Invite.LastName" class="col-sm-2 control-label">Achternaam</label>
+        <input asp-for="Invite.LastName" class="form-control" />
+        <span asp-validation-for="Invite.LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Invite.EmailAddress" class="col-sm-2 control-label">Email adres</label>
+        <input asp-for="Invite.EmailAddress" class="form-control" />
+        <span asp-validation-for="Invite.EmailAddress" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Uitnodigen</button>
+        </div>
+    </div>
+
+    @if ( !string.IsNullOrEmpty( (string)ViewData[ "InviteResult" ] ) ) {
+
+        <div class="alert alert-primary">
+            @ViewData[ "InviteResult" ]
+        </div>
+    }
+
+</form>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].Accepted )
+            </th>
+            <th>
+                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].EmailAddress )
+            </th>
+            <th>
+                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].PhoneNumber )
+            </th>
+            <th>
+               Naam
+            </th>
+            <th>
+                Aantal personen
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ( var item in Model.Dinner.Couples ) {
+            <tr>
+                <td>
+                    @Html.DisplayFor( modelItem => item.Accepted )
+                </td>
+                <td>
+                    @Html.DisplayFor( modelItem => item.EmailAddress )
+                </td>
+                <td>
+                    @Html.DisplayFor( modelItem => item.PhoneNumber )
+                </td>
+                <td>
+                    @item.PersonMain.ToString()
+                </td>
+                <td>
+                    @(item.PersonGuest == null ? 1 : 2)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Beheer</h3>
+<form class="form-horizontal" method="post" asp-page-handler="Manage">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Dinner.Title" class="col-sm-2 control-label">Titel</label>
+        <input asp-for="Dinner.Title" class="form-control" />
+        <span asp-validation-for="Dinner.Title" class="text-danger"></span>
+    </div>
+
+    @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
+
+        <div class="alert alert-primary">
+            @ViewData[ "ManageResult" ]
+        </div>
+    }
+
+</form>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,33 +7,30 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace WalkingDinner.Models {
+
     public class Couple {
 
-        [Key]
+        [DatabaseGenerated( DatabaseGeneratedOption.Identity )]
         public int ID { get; set; }
 
-        [ForeignKey( "DinnerID" )]
-        public Dinner Dinner { get; set; }
-        public int DinnerID { get; private set; }
+        public Dinner Dinner { get; set;}
+        public int DinnerID { get; }
 
-        [ForeignKey( "PersonMainID" )]
         public Person PersonMain { get; set; }
-        public int PersonMainID { get; private set; }
+        public int PersonMainID { get; }
 
-        [ForeignKey( "PersonExtraID" )]
-        public Person PersonExtra { get; set; }
-        public int PersonExtraID { get; private set; }
+        public Person PersonGuest { get; set; }
+        public int? PersonGuestID { get; }
 
         public string EmailAddress { get; set; }
 
-        public bool EmailValidated { get; set; }
-
-        public string UniqueCode { get; set; }
+        public bool Accepted { get; set; }
 
         public string PhoneNumber { get; set; }
 
-        [ForeignKey( "AddressID" )]
+        public string AdminCode { get; set; }
+
         public Address Address { get; set; }
-        public int AddressID { get; private set; }
+        public int AddressID { get; }
     }
 }

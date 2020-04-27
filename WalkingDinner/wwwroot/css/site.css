@@ -80,10 +80,22 @@ body {
     margin-left: auto
 }
 
+.navbar {
+    margin: 0; /*add this*/
+}
 .jumbotron {
     background-image: url("../Images/table-picture.jpg");
     background-size: cover;
-    height: 400px;
     color: #ffffff;
-    outline:medium;
+    outline: medium;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.mb3 {
+    margin-bottom: 0;
+}
+
+.navbar li a {
+    color: white;
 }

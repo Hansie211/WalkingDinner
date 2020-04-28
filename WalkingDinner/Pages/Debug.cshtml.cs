@@ -9,6 +9,7 @@ using WalkingDinner.Database;
 using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages {
+
     public class DebugModel : DataBoundModel {
 
         public DebugModel( DatabaseContext context ) : base( context ) {

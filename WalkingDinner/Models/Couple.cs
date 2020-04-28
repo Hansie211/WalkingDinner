@@ -36,6 +36,8 @@ namespace WalkingDinner.Models {
 
         public string AdminCode { get; set; }
 
+        public string PaymentId { get; set; }
+
         [Required]
         public Address Address { get; set; }
     }

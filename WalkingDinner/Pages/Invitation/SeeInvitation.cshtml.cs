@@ -44,8 +44,26 @@ namespace WalkingDinner.Pages.Invitation {
                 return RedirectToPage( ModelPath.Get<IndexModel>(), new { CoupleID, AdminCode } );
             }
 
+            Dinner = couple.Dinner;
+
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostPayment() {
+
+            Couple couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( couple == null ) {
+
+                return NotFound();
+            }
+
+            if ( couple.Accepted ) {
+
+                // Couple has accepted / payed
+                return RedirectToPage( ModelPath.Get<IndexModel>(), new { CoupleID, AdminCode } );
+            }
+
+            return RedirectToPage( ModelPath.Get<PaymentModel>(), new { CoupleID, AdminCode } );
         }
     }
 }
- 

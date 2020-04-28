@@ -1,9 +1,93 @@
 ﻿@page "{CoupleID}/{AdminCode}"
 @model WalkingDinner.Pages.Invitation.SeeInvitationModel
+@using WalkingDinner.Extensions
 @{
     ViewData[ "Title" ] = "Landing";
 }
 
 <h1>Landing</h1>
 
-<h3><button>BETAAL</button></h3> of <h3> <button>GA DOOR</button></h3>
+@if ( Model.Dinner.Price == 0.0 ) {
+    <h3>Gratis diner:</h3>
+    <button asp-page-handler="Accept">Accepteer uitnodiging</button>
+} else {
+
+    <h3>Het dinner kost <span>@Html.DisplayFor( model => model.Dinner.Price )</span></h3>
+    <form asp-page-handler="Payment" method="post">
+        <button class="btn btn-default">Ga naar betalen</button>
+    </form>
+    @*<a href="@(ModelPath.Get<Invitation.PaymentModel>())">Ga naar betalen</a>*@
+}
+
+<div>
+    <h4>Dinner</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.Title )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.Title )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.Description )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.Description )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.Location )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.Location )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.Date )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.Date )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.SubscriptionStop )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.SubscriptionStop )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.Price )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.Price )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.IBAN )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.IBAN )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.AdminEmailAddress )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.AdminEmailAddress )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.AccessCode )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.AccessCode )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.AdminCode )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.AdminCode )
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor( model => model.Dinner.IsActivated )
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor( model => model.Dinner.IsActivated )
+        </dd>
+    </dl>
+</div>

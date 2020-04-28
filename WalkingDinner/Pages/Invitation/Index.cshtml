@@ -50,7 +50,7 @@
 
             <div class="form-group">
                 <label for="has-person-guest" class="control-label"></label>
-                <input id="has-person-guest" type="checkbox" checked="@(Model.Couple.PersonGuest != null)" class="form-control" />
+                @*<input id="has-person-guest" type="checkbox" @(( Model.Couple.PersonGuest != null ) ? "checked=" : string.Empty; ) class="form-control" />*@
             </div>
 
             <div id="person-guest">

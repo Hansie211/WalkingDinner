@@ -141,7 +141,7 @@ namespace WalkingDinner.Database {
             return couple;
         }
 
-        private async Task<Couple> GetCoupleAsync( int Id ) {
+        public async Task<Couple> GetCoupleAsync( int Id ) {
 
             Couple couple = await Database.Couples.Include( o => o.Dinner )
                                                   .Include( o => o.PersonMain )
@@ -193,6 +193,7 @@ namespace WalkingDinner.Database {
             }
 
             couple.PhoneNumber  = coupleData.PhoneNumber;
+            couple.PaymentId    = coupleData.PaymentId;
             couple.PersonMain.FirstName     = coupleData.PersonMain.FirstName;
             couple.PersonMain.Preposition   = coupleData.PersonMain.Preposition;
             couple.PersonMain.LastName      = coupleData.PersonMain.LastName;

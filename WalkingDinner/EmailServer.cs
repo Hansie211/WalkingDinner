@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 namespace WalkingDinner {
     public static class EmailServer {
 
+
         public static bool SendEmail( string to, string subject, string body ) {
 
+#warning EMAIL IS DEMO CODE
             /**
              * 
              * DEMO CODE!!!
@@ -28,9 +30,9 @@ namespace WalkingDinner {
             Directory.CreateDirectory( subdir );
 
             string destname = $"{to}-{DateTime.Now:yyyy-MM-dd HH-mm-ss}.html";
-            
-            string content = $"<html><body><h2>Subject: { subject }</h2>\n\n<pre>{ body }</pre></body></html>";
-            File.WriteAllText( Path.Join(subdir, destname), content);
+
+            string content = $"<html><body><h2>Subject: { subject }</h2><br /><br /><pre>{ body }</pre></body></html>";
+            File.WriteAllText( Path.Join( subdir, destname ), content );
 
             return true;
         }

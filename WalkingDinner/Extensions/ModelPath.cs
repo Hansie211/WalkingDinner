@@ -30,7 +30,7 @@ namespace WalkingDinner.Extensions {
 
         public static string GetAbsolutePath<T>( HostString RequestHost, params object[] parameters ) where T : PageModel {
 
-            StringBuilder result = new StringBuilder( $"https://{ RequestHost }/{ Get<T>() }/" );
+            StringBuilder result = new StringBuilder( $"https://{ RequestHost.ToString().TrimEnd('/') }/{ Get<T>() }/" );
 
             if ( parameters != null ) {
                 foreach ( object p in parameters ) {

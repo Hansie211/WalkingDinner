@@ -1,5 +1,6 @@
-﻿@page "/manage/{DinnerID}/{AdminCode}/"
-@model Pages.Demo.ManagementModel
+﻿@page "{DinnerID}/{AdminCode}"
+@model WalkingDinner.Pages.Management.IndexModel
+@using WalkingDinner.Extensions
 @{
     ViewData[ "Title" ] = "Management";
 }
@@ -13,20 +14,22 @@
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+    <span asp-validation-for="Invite" class="text-danger"></span>
+
     <div class="form-group">
-        <label asp-for="Invite.FirstName" class="col-sm-2 control-label">Voornaam</label>
-        <input asp-for="Invite.FirstName" class="form-control" />
-        <span asp-validation-for="Invite.FirstName" class="text-danger"></span>
+        <label asp-for="Invite.Person.FirstName" class="col-sm-2 control-label">Voornaam</label>
+        <input asp-for="Invite.Person.FirstName" class="form-control" />
+        <span asp-validation-for="Invite.Person.FirstName" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Invite.Preposition" class="col-sm-2 control-label">Tussenvoegsel</label>
-        <input asp-for="Invite.Preposition" class="form-control" />
-        <span asp-validation-for="Invite.Preposition" class="text-danger"></span>
+        <label asp-for="Invite.Person.Preposition" class="col-sm-2 control-label">Tussenvoegsel</label>
+        <input asp-for="Invite.Person.Preposition" class="form-control" />
+        <span asp-validation-for="Invite.Person.Preposition" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Invite.LastName" class="col-sm-2 control-label">Achternaam</label>
-        <input asp-for="Invite.LastName" class="form-control" />
-        <span asp-validation-for="Invite.LastName" class="text-danger"></span>
+        <label asp-for="Invite.Person.LastName" class="col-sm-2 control-label">Achternaam</label>
+        <input asp-for="Invite.Person.LastName" class="form-control" />
+        <span asp-validation-for="Invite.Person.LastName" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Invite.EmailAddress" class="col-sm-2 control-label">Email adres</label>
@@ -90,6 +93,7 @@
                     @(item.PersonGuest == null ? 1 : 2)
                 </td>
                 <td>
+                    <a asp-page="@(ModelPath.Get<Invitation.SeeInvitationModel>())" asp-route-CoupleID="@item.ID" asp-route-AdminCode="@item.AdminCode">DEBUG</a> |
                     <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
                     <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
                     <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>

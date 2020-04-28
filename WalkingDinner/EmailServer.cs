@@ -15,6 +15,11 @@ namespace WalkingDinner {
              * 
              */
 
+            if ( string.IsNullOrEmpty( to ) ) {
+
+                throw new ArgumentNullException( nameof( to ) );
+            }
+
             string FullLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string LocationDir  = Path.GetDirectoryName( FullLocation )  + @"\..\..\..\Emails";
 

@@ -12,7 +12,9 @@ using Microsoft.Extensions.Hosting;
 using WalkingDinner.Database;
 
 namespace WalkingDinner {
+
     public class Startup {
+
         public Startup( IConfiguration configuration ) {
             Configuration = configuration;
         }

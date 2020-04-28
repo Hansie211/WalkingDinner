@@ -1,11 +1,11 @@
 ﻿@page
-@model WalkingDinner.Pages.NewFolder1.IndexModel
-
+@model WalkingDinner.Pages.DebugModel
+@using WalkingDinner.Extensions
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Debug";
 }
 
-<h1>Index</h1>
+<h1>Debug</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -14,46 +14,46 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Title)
+                @Html.DisplayNameFor(model => model.Dinners[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Description)
+                @Html.DisplayNameFor(model => model.Dinners[0].Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Location)
+                @Html.DisplayNameFor(model => model.Dinners[0].Location)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Date)
+                @Html.DisplayNameFor(model => model.Dinners[0].Date)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].SubscriptionStop)
+                @Html.DisplayNameFor(model => model.Dinners[0].SubscriptionStop)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Price)
+                @Html.DisplayNameFor(model => model.Dinners[0].Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].IBAN)
+                @Html.DisplayNameFor(model => model.Dinners[0].IBAN)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].Admin)
+                @Html.DisplayNameFor(model => model.Dinners[0].Admin)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].AdminEmailAddress)
+                @Html.DisplayNameFor(model => model.Dinners[0].AdminEmailAddress)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Dinners[0].AccessCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].AccessCode)
-            </th>
+                @Html.DisplayNameFor(model => model.Dinners[0].AdminCode)
+            </th>*@
             <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].AdminCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dinner[0].IsActivated)
+                @Html.DisplayNameFor(model => model.Dinners[0].IsActivated)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Dinner) {
+@foreach (var item in Model.Dinners) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -82,19 +82,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.AdminEmailAddress)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.AccessCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AdminCode)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.IsActivated)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-page="@(ModelPath.Get<Management.IndexModel>())" asp-route-DinnerID="@item.ID" asp-route-AdminCode="@item.AdminCode" >DEBUG</a>
             </td>
         </tr>
 }

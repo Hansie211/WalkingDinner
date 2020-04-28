@@ -15,7 +15,7 @@ namespace WalkingDinner.Pages {
         public IndexModel( DatabaseContext context ) : base( context ) {
         }
 
-        public async Task<IActionResult> OnGetAsync() {
+        public IActionResult OnGet() {
 
             return Page();
 

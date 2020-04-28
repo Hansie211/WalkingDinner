@@ -1,0 +1,110 @@
+﻿@page "{CoupleID}/{AdminCode}"
+@model WalkingDinner.Pages.Invitation.IndexModel
+
+@{
+    ViewData[ "Title" ] = "Index";
+}
+
+<h1>Index</h1>
+
+<h4>Couple</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Couple.EmailAddress" class="control-label"></label>
+                <input asp-for="Couple.EmailAddress" class="form-control" />
+                <span asp-validation-for="Couple.EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Couple.DietaryGuidelines" class="control-label"></label>
+                <input asp-for="Couple.DietaryGuidelines" class="form-control" />
+                <span asp-validation-for="Couple.DietaryGuidelines" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Couple.PhoneNumber" class="control-label"></label>
+                <input asp-for="Couple.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Couple.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.PersonMain.FirstName" class="control-label"></label>
+                <input asp-for="Couple.PersonMain.FirstName" class="form-control" />
+                <span asp-validation-for="Couple.PersonMain.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.PersonMain.Preposition" class="control-label"></label>
+                <input asp-for="Couple.PersonMain.Preposition" class="form-control" />
+                <span asp-validation-for="Couple.PersonMain.Preposition" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.PersonMain.LastName" class="control-label"></label>
+                <input asp-for="Couple.PersonMain.LastName" class="form-control" />
+                <span asp-validation-for="Couple.PersonMain.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="has-person-guest" class="control-label"></label>
+                <input id="has-person-guest" type="checkbox" checked="@(Model.Couple.PersonGuest != null)" class="form-control" />
+            </div>
+
+            <div id="person-guest">
+
+                <div class="form-group">
+                    <label asp-for="Couple.PersonGuest.FirstName" class="control-label"></label>
+                    <input asp-for="Couple.PersonGuest.FirstName" class="form-control" />
+                    <span asp-validation-for="Couple.PersonGuest.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Couple.PersonGuest.Preposition" class="control-label"></label>
+                    <input asp-for="Couple.PersonGuest.Preposition" class="form-control" />
+                    <span asp-validation-for="Couple.PersonGuest.Preposition" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Couple.PersonGuest.LastName" class="control-label"></label>
+                    <input asp-for="Couple.PersonGuest.LastName" class="form-control" />
+                    <span asp-validation-for="Couple.PersonGuest.LastName" class="text-danger"></span>
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync( "_ValidationScriptsPartial" );}
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('#has-person-guest').on('change', function () {
+
+            var checked = $(this).prop('checked');
+            var children = $('#person-guest').find(".form-control");
+            var disabled = (checked == true) ? false : 'disabled';
+
+            for (var i = 0; i < children.length; i++) {
+
+                var child = $(children[i]);
+                child.prop('disabled', disabled);
+            }
+        }).trigger('change');
+    });
+</script>
+

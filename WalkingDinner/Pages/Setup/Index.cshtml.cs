@@ -4,13 +4,14 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using WalkingDinner.Database;
+using WalkingDinner.Extensions;
 using WalkingDinner.Models;
 
-namespace WalkingDinner.Pages {
+namespace WalkingDinner.Pages.Setup {
 
-    public class CreateNew : DataBoundModel {
+    public class IndexModel : DataBoundModel {
 
-        public CreateNew( DatabaseContext context ) : base( context ) {
+        public IndexModel( DatabaseContext context ) : base( context ) {
         }
 
         /**
@@ -40,11 +41,15 @@ namespace WalkingDinner.Pages {
                 return Page();
             }
 
-            await Database.CreateDinnerAsync( Dinner );
+            Dinner dinner = await Database.CreateDinnerAsync( Dinner );
+            if ( dinner == null ) {
+                ModelState.AddModelError( nameof(Dinner), "Kan dinner nu niet aanmaken.");
+            }
 
-            EmailServer.SendEmail( Dinner.AdminEmailAddress, "Nieuw dinner", $"Nieuw diner aangemaakt, code: <a href=\"https://{ Request.Host }/Manage/{Dinner.ID}/{Dinner.AdminCode}/\">Beheer</a>" );
+            EmailServer.SendEmail( Dinner.AdminEmailAddress, "Nieuw dinner", 
+                $"Nieuw diner aangemaakt, code: <a href=\"{ ModelPath.GetAbsolutePath<Management.IndexModel>( Request.Host, Dinner.ID, Dinner.AdminCode )}\">Beheer</a>" );
 
-            return RedirectToPage( "AwaitEmail" );
+            return RedirectToPage( ModelPath.Get<AwaitEmailModel>() );
         }
 
     }

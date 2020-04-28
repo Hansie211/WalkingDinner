@@ -9,11 +9,11 @@ using WalkingDinner.Database;
 using WalkingDinner.Extensions;
 using WalkingDinner.Models;
 
-namespace WalkingDinner.Pages.Demo {
+namespace WalkingDinner.Pages.Management {
 
-    public class ManagementModel : DataBoundModel {
+    public class IndexModel : DataBoundModel {
 
-        public ManagementModel( DatabaseContext context ) : base( context ) {
+        public IndexModel( DatabaseContext context ) : base( context ) {
         }
 
         /**
@@ -36,8 +36,18 @@ namespace WalkingDinner.Pages.Demo {
         [BindProperty]
         public Dinner Dinner { get; set; }
 
+        public class PersonInvite {
+
+            [Required]
+            public PersonMain Person { get; set; }
+
+            [Required]
+            [DataType(DataType.EmailAddress)]
+            public string EmailAddress { get; set; }
+        }
+
         [BindProperty]
-        public Invite Invite { get; set; }
+        public PersonInvite Invite { get; set; }
 
         public async Task<IActionResult> OnGetAsync() {
 
@@ -58,7 +68,7 @@ namespace WalkingDinner.Pages.Demo {
                 return NotFound();
             }
 
-            if ( !ModelState.IsValid( nameof(Invite) ) ) { 
+            if ( !ModelState.IsValid( nameof( Invite ) ) ) {
 
                 return Page();
             }
@@ -69,35 +79,43 @@ namespace WalkingDinner.Pages.Demo {
 
                 if ( storedCouple.EmailAddress == Invite.EmailAddress ) {
 
-                    ViewData[ "InviteResult" ] = $"{ ( Invite as Person ) } met emailadres { Invite.EmailAddress } is al uitgenodigd.";
+                    ModelState.AddModelError( nameof( Invite ), $"{ Invite.Person } met emailadres { Invite.EmailAddress } is al uitgenodigd." );
                     return Page();
                 }
             }
 
+            // Invite
+
             Couple couple = await Database.CreateCoupleAsync( DinnerID, new Couple() {
                 Accepted = false,
-                Address = new Address(),
-                Dinner = Dinner,
-                EmailAddress = Invite.EmailAddress,
-                PersonMain = ( Invite as Person ),
-                PersonGuest = null,
-                PhoneNumber = "",
+                Address = new Address(){
+                    Number          = default,
+                    NumberPostfix   = string.Empty,
+                    Place           = string.Empty,
+                    Street          = string.Empty,
+                    ZipCode         = string.Empty,
+                },
+                EmailAddress        = Invite.EmailAddress,
+                PersonMain          = Invite.Person,
+                PersonGuest         = null,
+                PhoneNumber         = string.Empty,
+                DietaryGuidelines   = string.Empty,
             } );
 
             if ( couple  == null ) {
 
-                ViewData[ "InviteResult" ] = $"Kan { ( Invite as Person ) } nu niet uitnodigen.";
+                ModelState.AddModelError( nameof(Invite), $"Kan { Invite.Person } nu niet uitnodigen." );
                 return Page();
             }
 
-            EmailServer.SendEmail( Invite.EmailAddress, "Uitnodiging", 
-                $"U ben uitgenodigd door { Dinner.Admin } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"https://{ Request.Host }/Invite/{ couple.ID }/{ couple.AdminCode }/\">Hier</a>" );
+            EmailServer.SendEmail( Invite.EmailAddress, "Uitnodiging",
+                $"U ben uitgenodigd door { Dinner.Admin } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePath<Invitation.SeeInvitationModel>( Request.Host, couple.ID, couple.AdminCode ) }\">Hier</a>" );
 
-            ViewData[ "InviteResult" ] = $"{ ( Invite as Person ) } is uitgenodigd.";
+            ViewData[ "InviteResult" ] = $"{ Invite.Person } is uitgenodigd.";
 
 
             // Clear input data
-            ModelState.Clear( nameof(Invite) );
+            ModelState.Clear( nameof( Invite ) );
             Invite = null;
 
             return Page();

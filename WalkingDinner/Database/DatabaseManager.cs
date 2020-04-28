@@ -45,13 +45,13 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        public async Task<Dinner> GetDinnerAsync( int dinnerID ) {
+        private async Task<Dinner> GetDinnerAsync( int Id ) {
 
             Dinner dinner = await Database.Dinners.Include( o => o.Couples ).ThenInclude( o => o.PersonMain )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.PersonGuest )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.Address )
                                                   .Include( o => o.Admin )
-                                                  .SingleOrDefaultAsync( o => o.ID == dinnerID );
+                                                  .SingleOrDefaultAsync( o => o.ID == Id );
             if ( dinner == null ) {
 
                 return null;
@@ -60,9 +60,9 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        public async Task<Dinner> GetDinnerAsAdmin( int dinnerID, string adminCode ) {
+        public async Task<Dinner> GetDinnerAsAdmin( int Id, string adminCode ) {
 
-            Dinner dinner = await GetDinnerAsync( dinnerID );
+            Dinner dinner = await GetDinnerAsync( Id );
             if ( dinner == null ) {
                 return null;
             }
@@ -74,9 +74,9 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        public async Task<Dinner> GetDinnerAsAccess( int dinnerID, string accessCode ) {
+        public async Task<Dinner> GetDinnerAsAccess( int Id, string accessCode ) {
 
-            Dinner dinner = await GetDinnerAsync( dinnerID );
+            Dinner dinner = await GetDinnerAsync( Id );
             if ( dinner == null ) {
                 return null;
             }
@@ -88,9 +88,9 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        public async Task<Dinner> RemoveDinnerAsync( int dinnerID ) {
+        public async Task<Dinner> RemoveDinnerAsync( int Id ) {
 
-            Dinner dinner = await Database.Dinners.FindAsync( dinnerID );
+            Dinner dinner = await Database.Dinners.FindAsync( Id );
             if ( dinner == null ) {
                 return null;
             }
@@ -101,9 +101,9 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        public async Task<Dinner> UpdateDinnerAsync( Dinner dinnerData ) {
+        public async Task<Dinner> UpdateDinnerAsync( int Id, Dinner dinnerData ) {
 
-            Dinner dinner = await Database.Dinners.FindAsync( dinnerData.ID );
+            Dinner dinner = await Database.Dinners.FindAsync( Id );
             if ( dinner == null ) {
                 return null;
             }
@@ -141,18 +141,77 @@ namespace WalkingDinner.Database {
             return couple;
         }
 
+        private async Task<Couple> GetCoupleAsync( int Id ) {
 
-        public async Task<Couple> UpdateCoupleAsync( Couple coupleData ) {
+            Couple couple = await Database.Couples.Include( o => o.Dinner )
+                                                  .Include( o => o.PersonMain )
+                                                  .Include( o => o.PersonGuest )
+                                                  .Include( o => o.Address )
+                                                  .SingleOrDefaultAsync( o => o.ID == Id );
+            if ( couple == null ) {
+                return null;
+            }
 
-            Couple couple = await Database.Couples.FindAsync( coupleData.ID );
+            return couple;
+        }
+
+        public async Task<Couple> GetCoupleAsAdminAsync( int Id, string AdminCode ) {
+
+            Couple couple = await GetCoupleAsync( Id );
+            if ( couple == null ) {
+
+                return null;
+            }
+
+            if ( couple.AdminCode != AdminCode ) {
+
+                return null;
+            }
+
+            return couple;
+        }
+
+        public async Task<Couple> GetCoupleAcceptedAsAdmin( int Id, string AdminCode ) {
+
+            Couple couple = await GetCoupleAsAdminAsync( Id, AdminCode );
+            if ( couple == null ) {
+                return null;
+            }
+
+            if ( !couple.Accepted ) {
+                return null;
+            }
+
+            return couple;
+        }
+
+        public async Task<Couple> UpdateCoupleAsync( int Id, Couple coupleData ) {
+
+            Couple couple = await GetCoupleAsync( Id );
             if ( couple == null ) {
                 return null;
             }
 
             couple.PhoneNumber  = coupleData.PhoneNumber;
-            couple.PersonMain   = coupleData.PersonMain;
-            couple.PersonGuest  = coupleData.PersonGuest;
-            couple.Address      = coupleData.Address;
+            couple.PersonMain.FirstName     = coupleData.PersonMain.FirstName;
+            couple.PersonMain.Preposition   = coupleData.PersonMain.Preposition;
+            couple.PersonMain.LastName      = coupleData.PersonMain.LastName;
+
+            if ( coupleData.PersonGuest == null ) {
+
+                couple.PersonGuest = null;
+
+            } else if ( couple.PersonGuest == null ) {
+
+                couple.PersonGuest = coupleData.PersonGuest;
+            } else {
+
+                couple.PersonGuest.FirstName     = coupleData.PersonGuest.FirstName;
+                couple.PersonGuest.Preposition   = coupleData.PersonGuest.Preposition;
+                couple.PersonGuest.LastName      = coupleData.PersonGuest.LastName;
+            }
+
+            // couple.Address      = coupleData.Address;
 
             Database.Update( couple );
             await Database.SaveChangesAsync();
@@ -160,9 +219,9 @@ namespace WalkingDinner.Database {
             return couple;
         }
 
-        public async Task<Couple> RemoveCoupleAsync( int coupleID ) {
+        public async Task<Couple> RemoveCoupleAsync( int Id ) {
 
-            Couple couple = await Database.Couples.FindAsync( coupleID );
+            Couple couple = await Database.Couples.FindAsync( Id );
             if ( couple == null ) {
                 return null;
             }

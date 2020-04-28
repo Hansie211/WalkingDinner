@@ -1,5 +1,6 @@
 ﻿@page
 @model Pages.IndexModel
+@using WalkingDinner.Extensions;
 @{
     ViewData[ "Title" ] = "Home page";
 }
@@ -15,10 +16,6 @@
             </div>
         </div>
 
-        <p><a class="navbar-brand" asp-page="CreateNew">Create a new dinner</a>.</p>
-
-        @*
-            <p><a class="navbar-brand" asp-page="Management" asp-route-AdminCode="uLVpjTzPH9Ve2ct5Q7hfkXoY5OfqVIHLHAg7iEUx" asp-route-DinnerID="1">Admin Page</a></p>
-            <p><a class="navbar-brand" asp-page="Overview" asp-route-AccessCode="RDAO-peuuDSf75I4-Qld1Kul-awu-vJ8eS0NdY-C" asp-route-DinnerID="1">Overview Page</a></p>
-        *@
+        <p><a class="navbar-brand" asp-page="@(ModelPath.Get<Setup.IndexModel>())">Create a new dinner</a>.</p>
+        <p><a class="navbar-brand" asp-page="@(ModelPath.Get<DebugModel>())">DEBUG</a></p>
     </div>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -12,13 +13,15 @@ namespace WalkingDinner.Database {
 
         public DatabaseContext( [NotNull] DbContextOptions options ) : base( options ) {
 
-            //string EntryDll = System.Reflection.Assembly.GetEntryAssembly().Location;
-            //EntryDll        = System.IO.Path.GetFileName( EntryDll ).ToLower();
+            string[] commandLineArgs    = Environment.GetCommandLineArgs();
+            string executable           = commandLineArgs[0];
+            executable                  = System.IO.Path.GetFileName( executable ).ToLower();
 
-            //if ( EntryDll == "ef.dll" ) {
-            //    Console.Out.WriteLine( "\nDatabase Update Detected\n" );
-            //    this.Database.EnsureDeleted();
-            //}
+            if ( executable == "ef.dll" && commandLineArgs[ 1 ]?.ToLower() == "database" && commandLineArgs[ 2 ]?.ToLower() == "update" ) {
+
+                Console.Out.WriteLine( "\nDatabase Update Detected\n" );
+                this.Database.EnsureDeleted();
+            }
 
             this.Database.EnsureCreated();
         }
@@ -33,34 +36,39 @@ namespace WalkingDinner.Database {
             modelBuilder.Entity<Dinner>( table => {
 
                 table.HasOne( o => o.Admin )
-                  .WithOne()
-                  .HasForeignKey<Dinner>( o => o.AdminID )
-                  .OnDelete( DeleteBehavior.Restrict );
+                     .WithOne( o => o.Dinner )
+                     .HasForeignKey<PersonAdmin>( o => o.DinnerID )
+                     ;
+            } );
 
-                table.HasMany( o => o.Couples )
-                  .WithOne( o => o.Dinner );
-            });
+            modelBuilder.Entity<PersonCouple>( table => {
 
+                table.HasIndex( o => o.CoupleID ).IsUnique( false );
+            } );
 
             modelBuilder.Entity<Couple>( table => {
 
-                table.HasOne( o => o.Address )
-                      .WithOne()
-                      .HasForeignKey<Couple>( o => o.AddressID );
-
-                table.HasOne( o => o.Dinner )
-                      .WithMany( o => o.Couples )
-                      .HasForeignKey( o => o.DinnerID );
-
                 table.HasOne( o => o.PersonMain )
-                      .WithOne()
-                      .HasForeignKey<Couple>( o => o.PersonMainID )
-                      .OnDelete( DeleteBehavior.Restrict );
+                     .WithOne( o => o.Couple )
+                     .HasForeignKey<PersonMain>( o => o.CoupleID )
+                     .OnDelete( DeleteBehavior.ClientCascade )
+                     ;
 
                 table.HasOne( o => o.PersonGuest )
-                      .WithOne()
-                      .HasForeignKey<Couple>( o => o.PersonGuestID )
-                      .OnDelete( DeleteBehavior.Restrict );
+                     .WithOne( o => o.Couple )
+                     .HasForeignKey<PersonGuest>( o => o.CoupleID )
+                     .OnDelete( DeleteBehavior.ClientCascade )
+                     ;
+
+                table.HasOne( o => o.Dinner )
+                     .WithMany( o => o.Couples )
+                     .HasForeignKey( o => o.DinnerID )
+                     ;
+
+                table.HasOne( o => o.Address )
+                     .WithOne( o => o.Couple )
+                     .HasForeignKey<Address>( o => o.CoupleID )
+                     ;
             } );
 
             base.OnModelCreating( modelBuilder );

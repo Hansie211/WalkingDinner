@@ -10,13 +10,15 @@ namespace WalkingDinner.Models {
 
     public class Person {
 
-        [DatabaseGenerated( DatabaseGeneratedOption.Identity )]
+        [DatabaseGenerated( DatabaseGeneratedOption.Identity ), Key]
         public int ID { get; set; }
 
+        [Required]
         public string FirstName { get; set; }
         
         public string Preposition { get; set; }
 
+        [Required]
         public string LastName { get; set; }
 
         public override string ToString() {
@@ -28,5 +30,25 @@ namespace WalkingDinner.Models {
 
             return result + LastName;
         }
+    }
+
+    public class PersonAdmin : Person {
+
+        public Dinner Dinner { get; set; }
+        public int DinnerID { get; }
+    }
+
+    public abstract class PersonCouple : Person {
+
+        public Couple Couple { get; set; }
+        public int CoupleID { get; }
+    }
+
+    public class PersonMain : PersonCouple {
+
+    }
+
+    public class PersonGuest : PersonCouple {
+
     }
 }

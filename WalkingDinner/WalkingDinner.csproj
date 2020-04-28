@@ -19,4 +19,8 @@
     <Folder Include="Emails\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Images\table-picture.jpg" />
+  </ItemGroup>
+
 </Project>

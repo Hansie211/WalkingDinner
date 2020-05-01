@@ -1,13 +1,13 @@
 ﻿
-* Landingspagina
+// * Landingspagina 
 
-* Nieuw dinner aanmaken
+// * Nieuw dinner aanmaken
 
-* Contact
+// * Contact
 
-* Privacy policy
+//* Privacy policy
 
-* Bugreport / Error
+// * Bugreport / Error
 
 * Beheerpagina dinner
 	* Mensen uitnodigen -> uitnodigingen zien

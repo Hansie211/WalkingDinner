@@ -33,9 +33,14 @@ namespace WalkingDinner.Pages.Invitation {
                 return NotFound();
             }
 
-            if ( couple.Accepted || couple.Dinner.Price == 0.0 ) {
+            if ( couple.Accepted ) {
 
-                return Redirect( ModelPath.Get<Invitation.IndexModel>() );
+                return Redirect( ModelPath.Get<Invitation.EditCoupleModel>( CoupleID, AdminCode ) );
+            }
+
+            if ( !couple.Dinner.HasPrice ) {
+
+                return Redirect( ModelPath.Get<Invitation.SeeInvitationModel>( CoupleID, AdminCode ) );
             }
 
             PaymentResponse response = await MollieAPI.PaymentRequest(
@@ -55,7 +60,7 @@ namespace WalkingDinner.Pages.Invitation {
 
             // Save the paymentId
             couple.PaymentId = response.Id;
-            await Database.UpdateCoupleAsync( couple.ID, couple );
+            await Database.SaveChangesAsync();
 
 
             // Go to mollie

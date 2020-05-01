@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace WalkingDinner.Mollie.Models {
 
-    public static class Currency {
+    public enum Currency {
 
-        public static readonly string EUR = "EUR";
+        EUR,
+        USD,
     }
 
     public class Amount {
@@ -20,9 +21,9 @@ namespace WalkingDinner.Mollie.Models {
 
         public Amount() { }
 
-        public Amount( string currency, double value ) {
-            Currency    = currency;
-            Value       = Math.Round( value, 2 ).ToString( "#.00" );
+        public Amount( Currency currency, double value ) {
+            Currency    = currency.ToString();
+            Value       = Math.Round( value, 2 ).ToString( "#.00", System.Globalization.CultureInfo.InvariantCulture );
         }
 
         public override string ToString() {

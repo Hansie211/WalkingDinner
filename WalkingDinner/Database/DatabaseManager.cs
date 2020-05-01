@@ -33,11 +33,14 @@ namespace WalkingDinner.Database {
             Database = context;
         }
 
-        public async Task<Dinner> CreateDinnerAsync( Dinner dinner ) {
+        public async Task<Dinner> CreateDinnerAsync( Dinner dinner, Couple adminCouple ) {
 
-            dinner.AdminEmailAddress = dinner.AdminEmailAddress?.ToLower();
-            dinner.AdminCode    = GenerateAccessCode();
-            dinner.AccessCode   = GenerateAccessCode();
+            adminCouple.EmailAddress    = adminCouple.EmailAddress?.ToLower();
+            adminCouple.AdminCode       = GenerateAccessCode();
+            adminCouple.IsAdmin         = true;
+            adminCouple.Validated       = true;
+
+            dinner.Couples.Add( adminCouple );
 
             Database.Add( dinner );
             await Database.SaveChangesAsync();
@@ -45,43 +48,14 @@ namespace WalkingDinner.Database {
             return dinner;
         }
 
-        private async Task<Dinner> GetDinnerAsync( int Id ) {
+        public async Task<Dinner> GetDinnerAsync( int Id ) {
 
             Dinner dinner = await Database.Dinners.Include( o => o.Couples ).ThenInclude( o => o.PersonMain )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.PersonGuest )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.Address )
-                                                  .Include( o => o.Admin )
                                                   .SingleOrDefaultAsync( o => o.ID == Id );
             if ( dinner == null ) {
 
-                return null;
-            }
-
-            return dinner;
-        }
-
-        public async Task<Dinner> GetDinnerAsAdmin( int Id, string adminCode ) {
-
-            Dinner dinner = await GetDinnerAsync( Id );
-            if ( dinner == null ) {
-                return null;
-            }
-
-            if ( dinner.AdminCode != adminCode ) {
-                return null;
-            }
-
-            return dinner;
-        }
-
-        public async Task<Dinner> GetDinnerAsAccess( int Id, string accessCode ) {
-
-            Dinner dinner = await GetDinnerAsync( Id );
-            if ( dinner == null ) {
-                return null;
-            }
-
-            if ( dinner.AccessCode != accessCode ) {
                 return null;
             }
 
@@ -103,37 +77,29 @@ namespace WalkingDinner.Database {
 
         public async Task<Dinner> UpdateDinnerAsync( int Id, Dinner dinnerData ) {
 
-            Dinner dinner = await Database.Dinners.FindAsync( Id );
+            Dinner dinner = await GetDinnerAsync( Id );
             if ( dinner == null ) {
                 return null;
             }
 
-            dinner.Title        = dinnerData.Title;
-            dinner.Description  = dinnerData.Description;
-            dinner.Location     = dinnerData.Location;
-            dinner.Date         = dinnerData.Date;
-            dinner.SubscriptionStop = dinnerData.SubscriptionStop;
-            dinner.Price        = dinnerData.Price;
-            dinner.IBAN         = dinnerData.IBAN;
-
-            dinner.AdminEmailAddress    = dinnerData.AdminEmailAddress?.ToLower();
-            dinner.Admin                = dinnerData.Admin;
-
-            Database.Update( dinner );
+            dinner.CopyFrom( dinnerData );
             await Database.SaveChangesAsync();
 
             return dinner;
         }
 
-        public async Task<Couple> CreateCoupleAsync( int dinnerID, Couple couple ) {
+        public async Task<Couple> CreateCoupleAsync( int dinnerID, string emailAddress, Person person ) {
 
             Dinner dinner = await Database.Dinners.FindAsync( dinnerID );
             if ( dinner == null ) {
                 return null;
             }
 
-            couple.EmailAddress = couple.EmailAddress?.ToLower();
-            couple.AdminCode    = GenerateAccessCode();
+            Couple couple = new Couple(){
+                EmailAddress    = emailAddress?.ToLower(),
+                AdminCode       = GenerateAccessCode(),
+                PersonMain      = (PersonMain)person,
+            };
 
             dinner.Couples.Add( couple );
             await Database.SaveChangesAsync();
@@ -171,18 +137,18 @@ namespace WalkingDinner.Database {
             return couple;
         }
 
-        public async Task<Couple> GetCoupleAcceptedAsAdmin( int Id, string AdminCode ) {
+        public async Task<bool> CoupleHasAccepted( int Id, string AdminCode ) {
 
-            Couple couple = await GetCoupleAsAdminAsync( Id, AdminCode );
+            Couple couple = await Database.Couples.FindAsync( Id );
             if ( couple == null ) {
-                return null;
+                return false;
             }
 
-            if ( !couple.Accepted ) {
-                return null;
+            if ( couple.AdminCode != AdminCode ) {
+                return false;
             }
 
-            return couple;
+            return couple.Accepted;
         }
 
         public async Task<Couple> UpdateCoupleAsync( int Id, Couple coupleData ) {
@@ -192,29 +158,9 @@ namespace WalkingDinner.Database {
                 return null;
             }
 
-            couple.PhoneNumber  = coupleData.PhoneNumber;
-            couple.PaymentId    = coupleData.PaymentId;
-            couple.PersonMain.FirstName     = coupleData.PersonMain.FirstName;
-            couple.PersonMain.Preposition   = coupleData.PersonMain.Preposition;
-            couple.PersonMain.LastName      = coupleData.PersonMain.LastName;
+            couple.CopyFrom( coupleData );
+            couple.Validated = true;
 
-            if ( coupleData.PersonGuest == null ) {
-
-                couple.PersonGuest = null;
-
-            } else if ( couple.PersonGuest == null ) {
-
-                couple.PersonGuest = coupleData.PersonGuest;
-            } else {
-
-                couple.PersonGuest.FirstName     = coupleData.PersonGuest.FirstName;
-                couple.PersonGuest.Preposition   = coupleData.PersonGuest.Preposition;
-                couple.PersonGuest.LastName      = coupleData.PersonGuest.LastName;
-            }
-
-            // couple.Address      = coupleData.Address;
-
-            Database.Update( couple );
             await Database.SaveChangesAsync();
 
             return couple;
@@ -231,6 +177,11 @@ namespace WalkingDinner.Database {
             await Database.SaveChangesAsync();
 
             return couple;
+        }
+
+        public async Task SaveChangesAsync() {
+
+            await Database.SaveChangesAsync();
         }
 
     }

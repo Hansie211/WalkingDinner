@@ -1,6 +1,5 @@
 ﻿@page "{CoupleID}/{AdminCode}"
-@model WalkingDinner.Pages.Invitation.IndexModel
-
+@model WalkingDinner.Pages.Invitation.EditCoupleModel
 @{
     ViewData[ "Title" ] = "Index";
 }
@@ -13,17 +12,20 @@
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <span asp-validation-for="Couple" class="text-danger"></span>
 
             <div class="form-group">
                 <label asp-for="Couple.EmailAddress" class="control-label"></label>
                 <input asp-for="Couple.EmailAddress" class="form-control" />
                 <span asp-validation-for="Couple.EmailAddress" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Couple.DietaryGuidelines" class="control-label"></label>
-                <input asp-for="Couple.DietaryGuidelines" class="form-control" />
+                <textarea asp-for="Couple.DietaryGuidelines" class="form-control"></textarea>
                 <span asp-validation-for="Couple.DietaryGuidelines" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Couple.PhoneNumber" class="control-label"></label>
                 <input asp-for="Couple.PhoneNumber" class="form-control" />
@@ -49,8 +51,8 @@
             </div>
 
             <div class="form-group">
-                <label for="has-person-guest" class="control-label"></label>
-                @*<input id="has-person-guest" type="checkbox" @(( Model.Couple.PersonGuest != null ) ? "checked=" : string.Empty; ) class="form-control" />*@
+                <label for="has-person-guest" class="control-label">Ik neem iemand mee</label>
+                <input id="has-person-guest" type="checkbox" @(( Model.Couple.PersonGuest != null ) ? "checked=\"checked\"" : string.Empty ) class="form-control" />
             </div>
 
             <div id="person-guest">
@@ -75,6 +77,35 @@
 
             </div>
 
+            <div class="form-group">
+                <label asp-for="Couple.Address.Street" class="control-label"></label>
+                <input asp-for="Couple.Address.Street" class="form-control" />
+                <span asp-validation-for="Couple.Address.Street" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.Address.Number" class="control-label"></label>
+                <input asp-for="Couple.Address.Number" class="form-control" />
+                <span asp-validation-for="Couple.Address.Number" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.Address.NumberSuffix" class="control-label"></label>
+                <input asp-for="Couple.Address.NumberSuffix" class="form-control" />
+                <span asp-validation-for="Couple.Address.NumberSuffix" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.Address.ZipCode" class="control-label"></label>
+                <input asp-for="Couple.Address.ZipCode" class="form-control" />
+                <span asp-validation-for="Couple.Address.ZipCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Couple.Address.Place" class="control-label"></label>
+                <input asp-for="Couple.Address.Place" class="form-control" />
+                <span asp-validation-for="Couple.Address.Place" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

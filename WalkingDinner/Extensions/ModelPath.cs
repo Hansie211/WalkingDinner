@@ -28,20 +28,38 @@ namespace WalkingDinner.Extensions {
             return absoluteName.Replace( '.', '/' );
         }
 
-        public static string GetAbsolutePath<T>( HostString RequestHost, params object[] parameters ) where T : PageModel {
+        public static string Get<T>( params object[] parameters ) where T : PageModel {
 
-            StringBuilder result = new StringBuilder( $"https://{ RequestHost }{ Get<T>() }/" );
+            StringBuilder result = new StringBuilder( Get<T>() + '/' );
 
             if ( parameters != null ) {
+
                 foreach ( object p in parameters ) {
 
                     string s = p?.ToString();
-
                     result.Append( s + '/' );
                 }
             }
 
             return result.ToString();
+        }
+
+        public static string GetAbsolutePath<T>( HostString RequestHost, params object[] parameters ) where T : PageModel {
+
+            return $"https://{ RequestHost }{ Get<T>( parameters )}";
+
+            //StringBuilder result = new StringBuilder( $"https://{ RequestHost }{ Get<T>() }/" );
+
+            //if ( parameters != null ) {
+            //    foreach ( object p in parameters ) {
+
+            //        string s = p?.ToString();
+
+            //        result.Append( s + '/' );
+            //    }
+            //}
+
+            //return result.ToString();
         }
     }
 }

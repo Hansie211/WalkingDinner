@@ -9,12 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using WalkingDinner.Database;
 using WalkingDinner.Extensions;
 using WalkingDinner.Models;
+using WalkingDinner.Mollie;
 
 namespace WalkingDinner.Pages.Invitation {
 
-    public class IndexModel : DataBoundModel {
+    public class EditCoupleModel : DataBoundModel {
 
-        public IndexModel( DatabaseContext context ) : base( context ) {
+        public EditCoupleModel( DatabaseContext context ) : base( context ) {
         }
 
         [BindProperty( SupportsGet = true )]
@@ -27,21 +28,41 @@ namespace WalkingDinner.Pages.Invitation {
         public Couple Couple { get; set; }
 
         public async Task<IActionResult> OnGetAsync() {
-            Couple = await Database.GetCoupleAcceptedAsAdmin( CoupleID, AdminCode );
 
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
             if ( Couple == null ) {
 
                 return NotFound();
             }
 
+            if ( !Couple.Accepted ) {
+
+                if ( Couple.Dinner.HasPrice && !string.IsNullOrEmpty( Couple.PaymentId ) ) {
+
+                    return Redirect( ModelPath.Get<RedirectPaymentModel>( CoupleID, AdminCode ) );
+                }
+
+                return Redirect( ModelPath.Get<SeeInvitationModel>( CoupleID, AdminCode ) );
+            }
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync() {
 
             if ( !ModelState.IsValid ) {
+                return Page();
+            }
+
+            if ( !await Database.CoupleHasAccepted( CoupleID, AdminCode ) ) {
+
+                // Wrong id / admincode
+                return NotFound();
+            }
+
+            if ( await Database.UpdateCoupleAsync( CoupleID, Couple ) == null ) {
+
+                ModelState.AddModelError( "Couple", "Kan nu niet opslaan, probeer het later opnieuw." );
                 return Page();
             }
 
@@ -51,11 +72,13 @@ namespace WalkingDinner.Pages.Invitation {
             //    return NotFound();
             //}
 
-            Couple = await Database.UpdateCoupleAsync( CoupleID, Couple );
-            if ( Couple == null ) {
-                // Error
-                return BadRequest();
-            }
+
+
+            //Couple = await Database.UpdateCoupleAsync( CoupleID, Couple );
+            //if ( Couple == null ) {
+            //    // Error
+            //    return BadRequest();
+            //}
 
             return Page();
 

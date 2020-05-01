@@ -33,17 +33,18 @@ namespace WalkingDinner.Database {
 
         protected override void OnModelCreating( ModelBuilder modelBuilder ) {
 
-            modelBuilder.Entity<Dinner>( table => {
-
-                table.HasOne( o => o.Admin )
-                     .WithOne( o => o.Dinner )
-                     .HasForeignKey<PersonAdmin>( o => o.DinnerID )
-                     ;
-            } );
-
-            modelBuilder.Entity<PersonCouple>( table => {
+            modelBuilder.Entity<Person>( table => {
 
                 table.HasIndex( o => o.CoupleID ).IsUnique( false );
+            } );
+
+            modelBuilder.Entity<Dinner>( table => {
+
+                table.HasOne( o => o.Address )
+                     .WithOne( o => o.Dinner )
+                     .HasForeignKey<DinnerAddress>( o => o.DinnerID )
+                     .OnDelete( DeleteBehavior.ClientCascade )
+                     ;
             } );
 
             modelBuilder.Entity<Couple>( table => {
@@ -67,7 +68,7 @@ namespace WalkingDinner.Database {
 
                 table.HasOne( o => o.Address )
                      .WithOne( o => o.Couple )
-                     .HasForeignKey<Address>( o => o.CoupleID )
+                     .HasForeignKey<CoupleAddress>( o => o.CoupleID )
                      ;
             } );
 

@@ -3,62 +3,68 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WalkingDinner.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace WalkingDinner.Models {
 
-    public class Dinner {
+    public class Dinner : DatabaseRecord<Dinner> {
 
-        [DatabaseGenerated( DatabaseGeneratedOption.Identity ), Key]
-        public int ID { get; set; }
+        public const int MIN_DAYS_IN_ADVANCE = 7;
 
         [Required]
-        [StringLength(maximumLength: 20)]
+        [StringLength( maximumLength: 20 )]
+        [Display( Name = "Title" )]
         public string Title { get; set; }
 
         [Required]
-        [DataType( DataType.MultilineText)]
+        [DataType( DataType.MultilineText )]
+        [Display( Name = "Beschrijving" )]
         public string Description { get; set; }
 
         [Required]
-        public string Location { get; set; }
-
-        [Required]
         [DataType( DataType.DateTime )]
+        [Display( Name = "Datum van dinner" )]
         public DateTime Date { get; set; }
 
         [Required]
         [DataType( DataType.DateTime )]
+        [Display( Name = "Uiterste aanmelddatum" )]
         public DateTime SubscriptionStop { get; set; }
 
         [Required]
         [DataType( DataType.Currency )]
-        public float Price { get; set; }
+        [Display( Name = "Prijs" )]
+        public double Price { get; set; }
 
         [Required]
-        public string IBAN { get; set; }
-
-        [Required]
-        public PersonAdmin Admin { get; set; }
-
-        [Required]
-        [DataType( DataType.EmailAddress)]
-        public string AdminEmailAddress { get; set; }
+        public DinnerAddress Address { get; set; }
 
         [Required]
         public IList<Couple> Couples { get; set; }
 
-        public string AccessCode { get; set; }
-
-        public string AdminCode { get; set; }
-
-        [Required]
-        public bool IsActivated { get; set; }
+        [NotMapped]
+        public bool HasPrice { get => Price > 0.0; }
 
         public Dinner() {
 
             Couples = new List<Couple>();
+        }
+
+        public override void CopyFrom( Dinner source ) {
+
+            if ( source == null ) {
+                return;
+            }
+
+            Title               = source.Title;
+            Description         = source.Description;
+            Date                = source.Date;
+            SubscriptionStop    = source.SubscriptionStop;
+            Price               = source.Price;
+
+            Address.CopyFrom( source.Address );
         }
     }
 }

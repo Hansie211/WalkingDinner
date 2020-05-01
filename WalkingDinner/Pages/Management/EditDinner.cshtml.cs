@@ -11,9 +11,9 @@ using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
 
-    public class IndexModel : DataBoundModel {
+    public class EditDinnerModel : DataBoundModel {
 
-        public IndexModel( DatabaseContext context ) : base( context ) {
+        public EditDinnerModel( DatabaseContext context ) : base( context ) {
         }
 
         /**
@@ -28,13 +28,13 @@ namespace WalkingDinner.Pages.Management {
          */
 
         [BindProperty( SupportsGet = true )]
-        public int DinnerID { get; set; }
+        public int CoupleID { get; set; }
 
         [BindProperty( SupportsGet = true )]
         public string AdminCode { get; set; }
 
         [BindProperty]
-        public Dinner Dinner { get; set; }
+        public Couple Couple { get; set; }
 
         public class PersonInvite {
 
@@ -42,7 +42,7 @@ namespace WalkingDinner.Pages.Management {
             public PersonMain Person { get; set; }
 
             [Required]
-            [DataType(DataType.EmailAddress)]
+            [DataType( DataType.EmailAddress )]
             public string EmailAddress { get; set; }
         }
 
@@ -51,19 +51,33 @@ namespace WalkingDinner.Pages.Management {
 
         public async Task<IActionResult> OnGetAsync() {
 
-            Dinner = await Database.GetDinnerAsAdmin( DinnerID, AdminCode );
-            if ( Dinner == null ) {
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( Couple == null ) {
 
                 return NotFound();
             }
+
+            if ( !Couple.IsAdmin ) {
+
+                return NotFound();
+            }
+
+            if ( !Couple.Accepted ) {
+
+                Couple.Accepted = true;
+                await Database.SaveChangesAsync();
+            }
+
+            // Load the dinner itself, including other couples
+            await Database.GetDinnerAsync( Couple.Dinner.ID );
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostInvite() {
 
-            Dinner = await Database.GetDinnerAsAdmin( DinnerID, AdminCode );
-            if ( Dinner == null ) {
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( Couple == null ) {
 
                 return NotFound();
             }
@@ -75,7 +89,7 @@ namespace WalkingDinner.Pages.Management {
 
             Invite.EmailAddress = Invite.EmailAddress.ToLower();
 
-            foreach ( Couple storedCouple in Dinner.Couples ) {
+            foreach ( Couple storedCouple in Couple.Dinner.Couples ) {
 
                 if ( storedCouple.EmailAddress == Invite.EmailAddress ) {
 
@@ -85,31 +99,16 @@ namespace WalkingDinner.Pages.Management {
             }
 
             // Invite
+            Couple invitedCouple = await Database.CreateCoupleAsync( Couple.Dinner.ID, Invite.EmailAddress, Invite.Person );
 
-            Couple couple = await Database.CreateCoupleAsync( DinnerID, new Couple() {
-                Accepted = false,
-                Address = new Address(){
-                    Number          = default,
-                    NumberPostfix   = string.Empty,
-                    Place           = string.Empty,
-                    Street          = string.Empty,
-                    ZipCode         = string.Empty,
-                },
-                EmailAddress        = Invite.EmailAddress,
-                PersonMain          = Invite.Person,
-                PersonGuest         = null,
-                PhoneNumber         = string.Empty,
-                DietaryGuidelines   = string.Empty,
-            } );
+            if ( invitedCouple == null ) {
 
-            if ( couple  == null ) {
-
-                ModelState.AddModelError( nameof(Invite), $"Kan { Invite.Person } nu niet uitnodigen." );
+                ModelState.AddModelError( nameof( Invite ), $"Kan { Invite.Person } nu niet uitnodigen." );
                 return Page();
             }
 
-            EmailServer.SendEmail( Invite.EmailAddress, "Uitnodiging",
-                $"U ben uitgenodigd door { Dinner.Admin } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePath<Invitation.SeeInvitationModel>( Request.Host, couple.ID, couple.AdminCode ) }\">Hier</a>" );
+            EmailServer.SendEmail( invitedCouple.EmailAddress, "Uitnodiging",
+                $"U ben uitgenodigd door { Couple.PersonMain } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePath<Invitation.SeeInvitationModel>( Request.Host, invitedCouple.ID, invitedCouple.AdminCode ) }\">Hier</a>" );
 
             ViewData[ "InviteResult" ] = $"{ Invite.Person } is uitgenodigd.";
 

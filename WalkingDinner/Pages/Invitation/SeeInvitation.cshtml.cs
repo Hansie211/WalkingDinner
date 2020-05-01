@@ -27,43 +27,52 @@ namespace WalkingDinner.Pages.Invitation {
         [BindProperty( SupportsGet = true )]
         public string AdminCode { get; set; }
 
-        [BindProperty]
-        public Dinner Dinner { get; set; }
+        public Couple Couple { get; set; }
 
         public async Task<IActionResult> OnGetAsync() {
 
-            Couple couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
-            if ( couple == null ) {
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( Couple == null ) {
 
                 return NotFound();
             }
 
-            if ( couple.Accepted ) {
+            if ( Couple.Accepted ) {
 
                 // Couple has accepted / payed
-                return RedirectToPage( ModelPath.Get<IndexModel>(), new { CoupleID, AdminCode } );
+                return RedirectToPage( ModelPath.Get<EditCoupleModel>( CoupleID, AdminCode ) );
             }
-
-            Dinner = couple.Dinner;
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostPayment() {
 
-            Couple couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
-            if ( couple == null ) {
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( Couple == null ) {
 
                 return NotFound();
             }
 
-            if ( couple.Accepted ) {
+            return RedirectToPage( ModelPath.Get<PaymentModel>( CoupleID, AdminCode ) );
+        }
 
-                // Couple has accepted / payed
-                return RedirectToPage( ModelPath.Get<IndexModel>(), new { CoupleID, AdminCode } );
+        public async Task<IActionResult> OnPostAccept() {
+
+            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( Couple == null ) {
+
+                return NotFound();
             }
 
-            return RedirectToPage( ModelPath.Get<PaymentModel>(), new { CoupleID, AdminCode } );
+            if ( Couple.Dinner.HasPrice ) { // not so fast
+                return RedirectToPage( ModelPath.Get<PaymentModel>( CoupleID, AdminCode ) );
+            }
+
+            Couple.Accepted = true;
+            await Database.SaveChangesAsync();
+
+            return RedirectToPage( ModelPath.Get<EditCoupleModel>( CoupleID, AdminCode ) );
         }
     }
 }

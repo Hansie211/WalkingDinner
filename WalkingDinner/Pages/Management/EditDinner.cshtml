@@ -1,5 +1,5 @@
-﻿@page "{DinnerID}/{AdminCode}"
-@model WalkingDinner.Pages.Management.IndexModel
+﻿@page "{CoupleID}/{AdminCode}"
+@model WalkingDinner.Pages.Management.EditDinnerModel
 @using WalkingDinner.Extensions
 @{
     ViewData[ "Title" ] = "Management";
@@ -57,16 +57,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].Accepted )
+                @Html.DisplayNameFor( model => model.Couple.Accepted )
             </th>
             <th>
-                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].EmailAddress )
+                @Html.DisplayNameFor( model => model.Couple.EmailAddress )
             </th>
             <th>
-                @Html.DisplayNameFor( model => model.Dinner.Couples[ 0 ].PhoneNumber )
+                @Html.DisplayNameFor( model => model.Couple.PhoneNumber )
             </th>
             <th>
-               Naam
+                Naam
             </th>
             <th>
                 Aantal personen
@@ -75,7 +75,8 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ( var item in Model.Dinner.Couples ) {
+        @foreach ( var item in Model.Couple.Dinner.Couples ) {
+            @if ( item.IsAdmin ) { continue; }
             <tr>
                 <td>
                     @Html.DisplayFor( modelItem => item.Accepted )
@@ -93,10 +94,7 @@
                     @(item.PersonGuest == null ? 1 : 2)
                 </td>
                 <td>
-                    <a asp-page="@(ModelPath.Get<Invitation.SeeInvitationModel>())" asp-route-CoupleID="@item.ID" asp-route-AdminCode="@item.AdminCode">DEBUG</a> |
-                    <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                    <a asp-page="@(ModelPath.Get<Invitation.SeeInvitationModel>())" asp-route-CoupleID="@item.ID" asp-route-AdminCode="@item.AdminCode">DEBUG</a>
                 </td>
             </tr>
         }
@@ -109,9 +107,9 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group">
-        <label asp-for="Dinner.Title" class="col-sm-2 control-label">Titel</label>
-        <input asp-for="Dinner.Title" class="form-control" />
-        <span asp-validation-for="Dinner.Title" class="text-danger"></span>
+        <label asp-for="Couple.Dinner.Title" class="col-sm-2 control-label">Titel</label>
+        <input asp-for="Couple.Dinner.Title" class="form-control" />
+        <span asp-validation-for="Couple.Dinner.Title" class="text-danger"></span>
     </div>
 
     @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {

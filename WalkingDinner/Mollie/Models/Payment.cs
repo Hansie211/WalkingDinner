@@ -10,7 +10,5 @@ namespace WalkingDinner.Mollie.Models {
         public string Description { get; set; }
 
         public string RedirectUrl { get; set; }
-
-        // public bool Testmode { get; set; }
     }
 }

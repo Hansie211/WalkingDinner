@@ -19,6 +19,8 @@
             <span asp-validation-for="Dinner" class="text-danger"></span>
 
             <h4>Het diner</h4>
+            <hr />
+
             <div class="form-group">
                 <label asp-for="Dinner.Title" class="control-label"></label>
                 <input asp-for="Dinner.Title" class="form-control" />
@@ -31,10 +33,16 @@
                 <span asp-validation-for="Dinner.Description" class="text-danger"></span>
             </div>
 
+
             <h4>Verzamelpunt</h4>
+            <hr />
+
             <partial name="_AddressView" for="Dinner.Address" />
 
+
             <h4>Data</h4>
+            <hr />
+
             <div class="form-group">
                 <label asp-for="Dinner.Date" class="control-label"></label>
                 <input asp-for="Dinner.Date" class="form-control" value="@Model.Dinner.Date.ToString("s")" min="@DateTime.Now.AddDays( Dinner.MIN_DAYS_IN_ADVANCE ).SetTime( 0, 0 ).ToString( "s" )" />
@@ -47,14 +55,19 @@
                 <span asp-validation-for="Dinner.SubscriptionStop" class="text-danger"></span>
             </div>
 
+
             <h4>Prijsinformatie</h4>
+            <hr />
+
             <div class="form-group">
                 <label asp-for="Dinner.Price" class="control-label"></label>
                 <input asp-for="Dinner.Price" class="form-control" />
                 <span asp-validation-for="Dinner.Price" class="text-danger"></span>
             </div>
 
+
             <h4>Uw gegevens</h4>
+            <hr />
 
             <div class="form-group">
                 <label asp-for="Couple.EmailAddress" class="control-label"></label>

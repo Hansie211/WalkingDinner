@@ -62,20 +62,6 @@ namespace WalkingDinner.Pages.Management {
             return null;
         }
 
-        private void ShuffleArray<T>( ref T[] array ) {
-
-            Random random = new Random();
-            for ( int i = 0; i < array.Length; i++ ) {
-
-                int newIndex = random.Next( 0, array.Length );
-
-                T temp              = array[ i ];
-                array[ i ]          = array[ newIndex ];
-                array[ newIndex ]   = temp;
-            }
-        }
-
-
         public async Task<IActionResult> OnGetAsync() {
 
             var getResult = await GetCoupleAsync();
@@ -124,10 +110,14 @@ namespace WalkingDinner.Pages.Management {
             // Rounding errors:
             totalCoupleCount = parallelMealCount * couplesPerGroup;
 
-            Couple[] allCouples     = ( await Database.GetCouplesAsync( Couple.Dinner.ID ) ).ToArray();
-            // ShuffleArray( ref allCouples );
+            Couple[] allCouples = ( await Database.GetCouplesAsync( Couple.Dinner.ID ) ).ToArray();
+            Schema schema       = Schema.GenerateSchema( allCouples, courseCount );
 
-            Schema schema = Schema.GenerateSchema( allCouples, courseCount );
+            if ( !Schema.ValidSchema( schema, allCouples, totalCoupleCount ) ) {
+
+                // ERROR
+
+            }
 
             return Page();
         }

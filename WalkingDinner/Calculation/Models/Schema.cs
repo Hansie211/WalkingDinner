@@ -26,12 +26,12 @@ namespace WalkingDinner.Calculation.Models {
         public static Schema GenerateSchema( Couple[] allCouples, int courseCount ) {
 
             // ShuffleArray( ref allCouples );
-            int coupleCount = allCouples.Length;
+            int coupleCount     = allCouples.Length;
 
             int parallelCount   = coupleCount / courseCount;
             int couplesPerMeal  = courseCount;
 
-            Schema schema = new Schema( courseCount, couplesPerMeal );
+            Schema schema       = new Schema( courseCount, couplesPerMeal );
             schema.Courses[ 0 ] = Course.SeedCourse( allCouples, parallelCount, couplesPerMeal );
 
             for ( int i = 1; i<courseCount; i++ ) {
@@ -49,6 +49,48 @@ namespace WalkingDinner.Calculation.Models {
             }
 
             return schema;
+        }
+
+        private static bool ValidSchema( Schema schema, Couple couple ) {
+
+            List<Couple> metCouples = new List<Couple>();
+
+            for ( int i = 0; i < schema.Courses.Length; i++ ) {
+
+                Meal meal = schema.Courses[i].GetMealForCouple( couple );
+                if ( meal == null ) {
+                    throw new Exception( "Cannot locate couple in a course." );
+                }
+
+                foreach ( Couple otherCouple in meal.Couples ) {
+
+                    if ( couple == otherCouple ) {
+                        continue;
+                    }
+
+                    if ( metCouples.Any( o => o == otherCouple ) ) {
+
+                        return false;
+                    }
+
+                    metCouples.Add( otherCouple );
+                }
+            }
+
+            return true;
+        }
+
+        public static bool ValidSchema( Schema schema, Couple[] allCouples, int coupleCount ) {
+
+            for ( int i = 0; i < coupleCount; i++ ) {
+
+                if ( !ValidSchema( schema, allCouples[ i ] ) ) {
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public Course[] Courses { get; }

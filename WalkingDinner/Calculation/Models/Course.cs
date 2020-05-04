@@ -54,6 +54,18 @@ namespace WalkingDinner.Calculation.Models {
             }
         }
 
+        public Meal GetMealForCouple( Couple couple ) {
+
+            foreach ( Meal meal in Meals ) {
+
+                if ( meal.Couples.Any( o => o == couple ) ) {
+                    return meal;
+                }
+            }
+
+            return null;
+        }
+
         public Course( int count, int couplesPerMeal ) {
 
             CouplesPerMeal  = couplesPerMeal;

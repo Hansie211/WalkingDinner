@@ -87,5 +87,15 @@ namespace WalkingDinner.Models {
                 Address = source.Address;
             }
         }
+
+        public string GetName() {
+
+            string result = PersonMain.FirstName;
+            if ( PersonGuest != null ) {
+                result += $" en { PersonGuest.FirstName }";
+            }
+
+            return result;
+        }
     }
 }

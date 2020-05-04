@@ -2,7 +2,7 @@
 @model WalkingDinner.Pages.Management.OverviewModel
 @{
     ViewData[ "Title" ] = "Overview";
-    int coupleCount     = 17;//Model.Couple.Dinner.Couples.Count;
+    int coupleCount     = Model.Couple.Dinner.Couples.Count;
 }
 <div class="container">
     <br />
@@ -35,7 +35,18 @@
 
         <div class="form-group">
             <input type="submit" value="Opslaan & verzenden" class="btn btn-primary" />
+            @if ( !string.IsNullOrEmpty( (string)ViewData[ "Schema-error" ] ) ) {
+
+                <div class="alert p-1 text-danger">@ViewData[ "Schema-error" ]</div>
+            }
         </div>
+
+        @if ( !string.IsNullOrEmpty( (string)ViewData[ "message" ] ) ) {
+
+            <div class="alert alert-primary">
+                @ViewData[ "message" ]
+            </div>
+        }
     </form>
 </div>
 

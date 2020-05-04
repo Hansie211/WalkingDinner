@@ -112,6 +112,8 @@
         <span asp-validation-for="Couple.Dinner.Title" class="text-danger"></span>
     </div>
 
+    @{ #warning Edit dinner }
+
     @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
 
         <div class="alert alert-primary">

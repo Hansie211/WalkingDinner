@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using WalkingDinner.Calculation.Models;
 using WalkingDinner.Database;
 using WalkingDinner.Extensions;
@@ -59,6 +59,8 @@ namespace WalkingDinner.Pages.Management {
                 return BadRequest();
             }
 
+            await Database.GetDinnerAsync( Couple.Dinner.ID );
+
             return null;
         }
 
@@ -105,7 +107,7 @@ namespace WalkingDinner.Pages.Management {
             int totalCoupleCount    = Couple.Dinner.Couples.Count;
             int couplesPerGroup     = courseCount;
 
-            int parallelMealCount  = totalCoupleCount / couplesPerGroup;
+            int parallelMealCount   = totalCoupleCount / couplesPerGroup;
 
             // Rounding errors:
             totalCoupleCount = parallelMealCount * couplesPerGroup;
@@ -117,8 +119,59 @@ namespace WalkingDinner.Pages.Management {
 
                 // ERROR
 
+                ViewData[ "Schema-error" ] =  "Huidige indeling is niet mogelijk.";
+                return Page();
             }
 
+            // Send emails
+            for ( int i = 0; i < schema.Courses.Length; i++ ) {
+
+                foreach ( Meal meal in schema.Courses[ i ].Meals ) {
+
+                    Couple chef = meal.Couples[ i ];
+
+                    StringBuilder emailBody = new StringBuilder();
+
+                    emailBody.Append( $"Hoi { chef.PersonMain.FirstName }" );
+                    if ( chef.PersonGuest != null ) {
+
+                        emailBody.Append( $" en { chef.PersonGuest.FirstName }" );
+                    }
+                    emailBody.AppendLine( "," );
+
+                    emailBody.AppendLine( $"Jij/jullie gaan koken in ronde { i + 1 }! Jullie maken een '{ CourseSelection.Keys.ElementAt( i ) }'." );
+                    emailBody.AppendLine( "De volgende dieetwensen zijn opgegeven:" );
+
+                    bool hasGuidelines = false;
+                    foreach ( Couple couple in meal.Couples ) {
+
+                        if ( couple == chef ) {
+                            continue;
+                        }
+
+                        string guidelines = couple.DietaryGuidelines?.Trim();
+                        if ( !string.IsNullOrEmpty( guidelines ) ) {
+
+                            emailBody.AppendLine( guidelines );
+                            hasGuidelines = true;
+                        }
+                    }
+
+                    if ( !hasGuidelines ) {
+                        emailBody.AppendLine( "Geen." );
+                    }
+
+                    emailBody.AppendLine( "Veel plezier!" );
+
+                    EmailServer.SendEmail( chef.EmailAddress, "Walking dinner!", emailBody.ToString() );
+                }
+            }
+
+
+            PDF.Letter.Generate( allCouples[ 0 ], allCouples[ 1 ] );
+
+
+            ViewData[ "message" ] = "Schema is opgeslagen.";
             return Page();
         }
     }

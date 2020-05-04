@@ -89,6 +89,8 @@ namespace WalkingDinner.Pages.Management {
 
             Invite.EmailAddress = Invite.EmailAddress.ToLower();
 
+            await Database.GetDinnerAsync( Couple.Dinner.ID );
+
             foreach ( Couple storedCouple in Couple.Dinner.Couples ) {
 
                 if ( storedCouple.EmailAddress == Invite.EmailAddress ) {

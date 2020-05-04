@@ -66,7 +66,7 @@ namespace WalkingDinner.Pages.Invitation {
             }
 
             if ( Couple.Dinner.HasPrice ) { // not so fast
-                return RedirectToPage( ModelPath.Get<PaymentModel>( CoupleID, AdminCode ) );
+                return BadRequest();
             }
 
             Couple.Accepted = true;

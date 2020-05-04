@@ -137,6 +137,11 @@ namespace WalkingDinner.Database {
             return couple;
         }
 
+        public async Task<IEnumerable<Couple>> GetCouplesAsync( int dinnerId ) {
+
+            return await Database.Couples.Where( o => o.Dinner.ID == dinnerId ).ToListAsync();
+        }
+
         public async Task<bool> CoupleHasAccepted( int Id, string AdminCode ) {
 
             Couple couple = await Database.Couples.FindAsync( Id );

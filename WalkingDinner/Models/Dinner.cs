@@ -35,7 +35,7 @@ namespace WalkingDinner.Models {
 
         [Required]
         [DataType( DataType.Currency )]
-        [Display( Name = "Prijs" )]
+        [Display( Name = "Prijs per deelnemer" )]
         public double Price { get; set; }
 
         [Required]

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WalkingDinner.Database;
+using WalkingDinner.Extensions;
 using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
@@ -17,12 +19,6 @@ namespace WalkingDinner.Pages.Management {
         public RemoveCoupleModel( DatabaseContext context ) : base( context ) {
         }
 
-        [BindProperty( SupportsGet = true )]
-        public int CoupleID { get; set; }
-
-        [BindProperty( SupportsGet = true )]
-        public string AdminCode { get; set; }
-
         public Couple Couple { get; set; }
 
         public async Task<IActionResult> OnGetAsync( int? IdToRemove ) {
@@ -32,7 +28,13 @@ namespace WalkingDinner.Pages.Management {
                 return NotFound();
             }
 
-            Couple adminCouple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            if ( IdToRemove == AuthorizedID ) {
+
+                // Cannot remove self
+                return BadRequest();
+            }
+
+            Couple adminCouple = await GetAuthorizedCouple();
             if ( adminCouple == null ) {
 
                 return NotFound();
@@ -52,19 +54,39 @@ namespace WalkingDinner.Pages.Management {
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync( int? id ) {
-            if ( id == null ) {
+        public async Task<IActionResult> OnPostAsync( int? IdToRemove ) {
+
+            if ( IdToRemove == null ) {
+
                 return NotFound();
             }
 
-            //Couple = await _context.Couples.FindAsync( id );
+            if ( IdToRemove == AuthorizedID ) {
 
-            //if ( Couple != null ) {
-            //    _context.Couples.Remove( Couple );
-            //    await _context.SaveChangesAsync();
-            //}
+                // Cannot remove self
+                return BadRequest();
+            }
 
-            return RedirectToPage( "./Index" );
+            Couple adminCouple = await GetAuthorizedCouple();
+            if ( adminCouple == null ) {
+
+                return NotFound();
+            }
+
+            Couple = await Database.GetCoupleAsync( IdToRemove.Value );
+            if ( Couple == null ) {
+
+                return NotFound();
+            }
+
+            if ( Couple.Dinner.ID != adminCouple.Dinner.ID ) {
+
+                return BadRequest();
+            }
+
+            await Database.RemoveCoupleAsync( IdToRemove.Value );
+
+            return Redirect( ModelPath.Get<Management.EditDinnerModel>() );
         }
     }
 }

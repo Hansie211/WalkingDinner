@@ -36,18 +36,19 @@ namespace WalkingDinner.Models {
 
         public CoupleAddress Address { get; set; }
 
-        public bool Accepted { get; set; }
-
         public string PaymentId { get; set; }
 
+        public string PaymentStatus { get; set; }
+
+        [NotMapped]
+        public bool HasPayed { get => PaymentStatus?.ToLower() == "paid"; }
+
+        [Display( Name = "Profiel ingevuld" )]
         public bool Validated { get; set; }
 
         public bool IsAdmin { get; set; }
 
         public string AdminCode { get; set; }
-
-        [NotMapped]
-        public bool Registered { get => Accepted && Validated; }
 
         public override void CopyFrom( Couple source ) {
 

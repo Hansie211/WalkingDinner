@@ -53,12 +53,6 @@ namespace WalkingDinner.Pages.Management {
                 return NotFound();
             }
 
-            if ( !Couple.Accepted ) {
-
-                Couple.Accepted = true;
-                await Database.SaveChangesAsync();
-            }
-
             // Load the dinner itself, including other couples
             await Database.GetDinnerAsync( Couple.Dinner.ID );
 
@@ -101,7 +95,7 @@ namespace WalkingDinner.Pages.Management {
             }
 
             EmailServer.SendEmail( invitedCouple.EmailAddress, "Uitnodiging",
-                $"U ben uitgenodigd door { Couple.PersonMain } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePath<Invitation.SeeInvitationModel>( Request.Host, invitedCouple.ID, invitedCouple.AdminCode ) }\">Hier</a>" );
+                $"U ben uitgenodigd door { Couple.PersonMain } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePathWithAuthorization<Couples.SeeInvitationModel>( Request.Host, invitedCouple.ID, invitedCouple.AdminCode ) }\">Hier</a>" );
 
             ViewData[ "InviteResult" ] = $"{ Invite.Person } is uitgenodigd.";
 

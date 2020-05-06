@@ -60,8 +60,11 @@
 
         <div class="form-group">
             <label asp-for="Dinner.Price" class="control-label"></label>
-            <input asp-for="Dinner.Price" class="form-control" />
-            <div id="slider-range-max"></div>
+            <div class="input-group">
+                <span class="form-control" style="flex:none">€</span>
+                <input asp-for="Dinner.Price" class="form-control" />
+            </div>
+            <div id="slider-price" class="mt-2"></div>
             <span asp-validation-for="Dinner.Price" class="text-danger"></span>
         </div>
 
@@ -83,16 +86,30 @@
 
     <script type="text/javascript">
         $(function () {
-            $("#slider-range-max").slider({
+
+            var price = @Model.Dinner?.Price.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+            var toCurrency = function (p) {
+
+                return p.toFixed(2).toString().replace('.', ',');
+            };
+
+            $("#slider-price").slider({
                 range: "max",
-                min: 1,
-                max: 10,
-                value: 2,
+                min: 0,
+                max: 30,
+                value: price,
+                step: 0.1,
                 slide: function (event, ui) {
-                    $("#amount").val(ui.value);
+
+                    var value = toCurrency(ui.value);
+
+                    $("#Dinner_Price").val(value);
                 }
             });
-            $("#amount").val($("#slider-range-max").slider("value"));
+
+            // $("#Dinner_Price").attr("type", "hidden");
+
+            $("#slider-price").slider("value");
         });
     </script>
 }

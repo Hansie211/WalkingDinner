@@ -110,11 +110,8 @@ input[type="checkbox"] {
     display: inline-block;
     transform: scale(1.5);
     -webkit-transform: scale(1.5);
-}
-
-input.checkbox {
-    transform: scale(1.5);
-    -webkit-transform: scale(1.5);
+    margin-top: 5px;
+    margin-right: 7px;
 }
 
 input[type=number]::-webkit-inner-spin-button,

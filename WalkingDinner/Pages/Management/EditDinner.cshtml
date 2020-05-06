@@ -33,10 +33,10 @@
 
         @if ( !string.IsNullOrEmpty( (string)ViewData[ "InviteResult" ] ) ) {
 
-        <div class="alert alert-primary">
-            @ViewData[ "InviteResult" ]
-        </div>
-    }
+            <div class="alert alert-primary">
+                @ViewData[ "InviteResult" ]
+            </div>
+        }
 
     </form>
 
@@ -45,7 +45,7 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor( model => model.Couple.Accepted )
+                    @Html.DisplayNameFor( model => model.Couple.Validated )
                 </th>
                 <th>
                     @Html.DisplayNameFor( model => model.Couple.EmailAddress )
@@ -64,28 +64,32 @@
         </thead>
         <tbody>
             @foreach ( var item in Model.Couple.Dinner.Couples ) {
-            @*@if ( item.IsAdmin ) { continue; }*@
-            <tr>
-                <td>
-                    @Html.DisplayFor( modelItem => item.Accepted )
-                </td>
-                <td>
-                    @Html.DisplayFor( modelItem => item.EmailAddress )
-                </td>
-                <td>
-                    @Html.DisplayFor( modelItem => item.PhoneNumber )
-                </td>
-                <td>
-                    @item.PersonMain.ToString()
-                </td>
-                <td>
-                    @(item.PersonGuest == null ? 1 : 2)
-                </td>
-                <td>
-                    <a asp-page="@(ModelPath.Get<Invitation.SeeInvitationModel>())" asp-route-CoupleID="@item.ID" asp-route-AdminCode="@item.AdminCode">DEBUG</a>
-                </td>
-            </tr>
-        }
+                @*@if ( item.IsAdmin ) { continue; }*@
+                <tr>
+                    <td>
+                        @Html.DisplayFor( modelItem => item.Validated )
+                    </td>
+                    <td>
+                        @Html.DisplayFor( modelItem => item.EmailAddress )
+                    </td>
+                    <td>
+                        @Html.DisplayFor( modelItem => item.PhoneNumber )
+                    </td>
+                    <td>
+                        @item.PersonMain.ToString()
+                    </td>
+                    <td>
+                        @(item.PersonGuest == null ? 1 : 2)
+                    </td>
+                    <td>
+                        @if ( item.IsAdmin ) {
+                            <a asp-page="@(ModelPath.Get<Couples.EditCoupleModel>())">Bewerken</a>
+                        } else {
+                            <a asp-page="@(ModelPath.Get<Management.RemoveCoupleModel>())" asp-route-IdToRemove="@item.ID">Verwijderen</a>
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 
@@ -104,10 +108,10 @@
 
         @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
 
-        <div class="alert alert-primary">
-            @ViewData[ "ManageResult" ]
-        </div>
-    }
+            <div class="alert alert-primary">
+                @ViewData[ "ManageResult" ]
+            </div>
+        }
 
     </form>
 </div>

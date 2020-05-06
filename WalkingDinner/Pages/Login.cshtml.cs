@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -45,6 +46,8 @@ namespace WalkingDinner.Pages {
             HttpContext.Session.SetInt32( "Id", Id.Value );
             HttpContext.Session.SetString( "AdminCode", AdminCode );
 
+            RedirectUrl = HttpUtility.UrlDecode( RedirectUrl );
+
             if ( string.IsNullOrEmpty( RedirectUrl ) ) {
 
                 if ( couple.IsAdmin ) {
@@ -52,7 +55,7 @@ namespace WalkingDinner.Pages {
                     RedirectUrl = ModelPath.Get<Management.EditDinnerModel>();
                 } else {
 
-                    RedirectUrl = ModelPath.Get<Invitation.EditCoupleModel>();
+                    RedirectUrl = ModelPath.Get<Couples.EditCoupleModel>();
                 }
             }
 

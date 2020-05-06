@@ -1,26 +1,13 @@
-﻿@page "{CoupleID}/{AdminCode}"
-@model WalkingDinner.Pages.Invitation.SeeInvitationModel
+﻿@page
+@model WalkingDinner.Pages.Couples.SeeInvitationModel
 @using WalkingDinner.Extensions
 @{
-    ViewData[ "Title" ] = "Landing";
+    ViewData[ "Title" ] = "Uitnodiging";
 }
 
-<h1>Landing</h1>
+<h1>@ViewData[ "Title" ]</h1>
 
-@if ( !Model.Couple.Dinner.HasPrice ) {
-    <h3>Gratis diner:</h3>
-    <form asp-page-handler="Accept" method="post">
-        <button class="btn btn-default">Accepteer uitnodiging</button>
-    </form>
-} else {
-
-    <h3>Het dinner kost <span>@Html.DisplayFor( model => model.Couple.Dinner.Price )</span></h3>
-    <form asp-page-handler="Payment" method="post">
-        <button class="btn btn-default">Ga naar betalen</button>
-    </form>
-}
-
-<div>
+<div class="container-fluid col-xl-5 col-md-9 col-sm-12">
     <h4>Dinner</h4>
     <hr />
     <dl class="row">
@@ -50,4 +37,7 @@
             @Html.DisplayFor( model => model.Couple.Dinner.Date )
         </dd>
     </dl>
+
+    <a class="btn btn-primary" asp-page="@(ModelPath.Get<Couples.EditCoupleModel>())" role="button">Accepteer uitnodiging</a>
 </div>
+

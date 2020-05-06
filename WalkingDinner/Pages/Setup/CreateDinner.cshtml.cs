@@ -79,7 +79,7 @@ namespace WalkingDinner.Pages.Setup {
             }
 
             EmailServer.SendEmail( Couple.EmailAddress, "Nieuw dinner",
-                $"Nieuw diner aangemaakt, code: <a href=\"{ ModelPath.GetAbsolutePath<Management.EditDinnerModel>( Request.Host, Couple.ID, Couple.AdminCode )}\">Beheer</a>" );
+                $"Nieuw diner aangemaakt, code: <a href=\"{ ModelPath.GetAbsolutePathWithAuthorization<Management.EditDinnerModel>( Request.Host, Couple.ID, Couple.AdminCode )}\">Beheer</a>" );
 
             return Redirect( ModelPath.Get<AwaitEmailModel>() );
         }

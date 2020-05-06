@@ -1,4 +1,4 @@
-﻿@page "{CoupleID}/{AdminCode}"
+﻿@page
 @model WalkingDinner.Pages.Management.RemoveCoupleModel
 @{
     ViewData[ "Title" ] = "RemoveCouple";
@@ -34,12 +34,6 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor( model => model.Couple.PersonMain.LastName )
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor( model => model.Couple.Accepted )
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor( model => model.Couple.Accepted )
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor( model => model.Couple.Validated )

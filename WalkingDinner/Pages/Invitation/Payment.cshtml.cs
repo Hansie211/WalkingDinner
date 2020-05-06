@@ -35,12 +35,12 @@ namespace WalkingDinner.Pages.Invitation {
 
             if ( couple.Accepted ) {
 
-                return Redirect( ModelPath.Get<Invitation.EditCoupleModel>( CoupleID, AdminCode ) );
+                return Redirect( ModelPath.Get<Invitation.EditCoupleModel>() );
             }
 
             if ( !couple.Dinner.HasPrice ) {
 
-                return Redirect( ModelPath.Get<Invitation.SeeInvitationModel>( CoupleID, AdminCode ) );
+                return Redirect( ModelPath.Get<Invitation.SeeInvitationModel>() );
             }
 
             PaymentResponse response = await MollieAPI.PaymentRequest(

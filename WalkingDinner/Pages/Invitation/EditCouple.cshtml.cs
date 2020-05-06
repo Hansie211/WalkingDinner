@@ -39,10 +39,10 @@ namespace WalkingDinner.Pages.Invitation {
 
                 if ( Couple.Dinner.HasPrice && !string.IsNullOrEmpty( Couple.PaymentId ) ) {
 
-                    return Redirect( ModelPath.Get<RedirectPaymentModel>( CoupleID, AdminCode ) );
+                    return Redirect( ModelPath.Get<RedirectPaymentModel>() );
                 }
 
-                return Redirect( ModelPath.Get<SeeInvitationModel>( CoupleID, AdminCode ) );
+                return Redirect( ModelPath.Get<SeeInvitationModel>() );
             }
 
             return Page();
@@ -94,7 +94,7 @@ namespace WalkingDinner.Pages.Invitation {
             //    }
             //}
 
-            //return RedirectToPage( "./Index" );
+            //return Redirect( "./Index" );
         }
 
     }

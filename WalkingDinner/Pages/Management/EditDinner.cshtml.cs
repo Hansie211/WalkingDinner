@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WalkingDinner.Database;
@@ -11,6 +12,7 @@ using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
 
+    [Authorize( Policy = "AdminOnly" )]
     public class EditDinnerModel : DataBoundModel {
 
         public EditDinnerModel( DatabaseContext context ) : base( context ) {
@@ -26,12 +28,6 @@ namespace WalkingDinner.Pages.Management {
          * After Subscriptionstop, see possible combinations and choose one -> send hostes their courses, generate pdf's
          * 
          */
-
-        [BindProperty( SupportsGet = true )]
-        public int CoupleID { get; set; }
-
-        [BindProperty( SupportsGet = true )]
-        public string AdminCode { get; set; }
 
         [BindProperty]
         public Couple Couple { get; set; }
@@ -51,13 +47,8 @@ namespace WalkingDinner.Pages.Management {
 
         public async Task<IActionResult> OnGetAsync() {
 
-            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            Couple = await GetAuthorizedCouple();
             if ( Couple == null ) {
-
-                return NotFound();
-            }
-
-            if ( !Couple.IsAdmin ) {
 
                 return NotFound();
             }
@@ -76,7 +67,7 @@ namespace WalkingDinner.Pages.Management {
 
         public async Task<IActionResult> OnPostInvite() {
 
-            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            Couple = await GetAuthorizedCouple();
             if ( Couple == null ) {
 
                 return NotFound();
@@ -89,6 +80,7 @@ namespace WalkingDinner.Pages.Management {
 
             Invite.EmailAddress = Invite.EmailAddress.ToLower();
 
+            // Load the dinner itself, including other couples
             await Database.GetDinnerAsync( Couple.Dinner.ID );
 
             foreach ( Couple storedCouple in Couple.Dinner.Couples ) {
@@ -102,7 +94,6 @@ namespace WalkingDinner.Pages.Management {
 
             // Invite
             Couple invitedCouple = await Database.CreateCoupleAsync( Couple.Dinner.ID, Invite.EmailAddress, Invite.Person );
-
             if ( invitedCouple == null ) {
 
                 ModelState.AddModelError( nameof( Invite ), $"Kan { Invite.Person } nu niet uitnodigen." );
@@ -113,7 +104,6 @@ namespace WalkingDinner.Pages.Management {
                 $"U ben uitgenodigd door { Couple.PersonMain } om deel te namen aan een WalkingDinner. Bekijk uit uitnodiging <a href=\"{ ModelPath.GetAbsolutePath<Invitation.SeeInvitationModel>( Request.Host, invitedCouple.ID, invitedCouple.AdminCode ) }\">Hier</a>" );
 
             ViewData[ "InviteResult" ] = $"{ Invite.Person } is uitgenodigd.";
-
 
             // Clear input data
             ModelState.Clear( nameof( Invite ) );

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WalkingDinner.Calculation.Models;
 using WalkingDinner.Database;
@@ -11,6 +12,7 @@ using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
 
+    [Authorize( Policy = "AdminOnly" )]
     public class OverviewModel : DataBoundModel {
 
         public OverviewModel( DatabaseContext context ) : base( context ) {
@@ -38,15 +40,10 @@ namespace WalkingDinner.Pages.Management {
 
         private async Task<IActionResult> GetCoupleAsync() {
 
-            Couple = await Database.GetCoupleAsAdminAsync( CoupleID, AdminCode );
+            Couple = await GetAuthorizedCouple();
             if ( Couple == null ) {
 
                 return NotFound();
-            }
-
-            if ( !Couple.IsAdmin ) {
-
-                return BadRequest();
             }
 
             if ( Couple.Dinner.SubscriptionStop > DateTime.Now ) {
@@ -56,7 +53,7 @@ namespace WalkingDinner.Pages.Management {
 
             if ( Couple.Dinner.Date < DateTime.Now ) {
 
-                return BadRequest();
+                return Redirect( ModelPath.Get<Setup.CreateDinnerModel>() );
             }
 
             await Database.GetDinnerAsync( Couple.Dinner.ID );

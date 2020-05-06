@@ -109,6 +109,11 @@ namespace WalkingDinner.Database {
 
         public async Task<Couple> GetCoupleAsync( int Id ) {
 
+            if ( Id < 1 ) {
+
+                return null;
+            }
+
             Couple couple = await Database.Couples.Include( o => o.Dinner )
                                                   .Include( o => o.PersonMain )
                                                   .Include( o => o.PersonGuest )

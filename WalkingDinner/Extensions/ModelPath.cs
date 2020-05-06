@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,38 +29,37 @@ namespace WalkingDinner.Extensions {
             return absoluteName.Replace( '.', '/' );
         }
 
-        public static string Get<T>( params object[] parameters ) where T : PageModel {
+        private static object AuthorizedRouteValue( int Id, string AdminCode ) {
 
-            StringBuilder result = new StringBuilder( Get<T>() + '/' );
+            return new { Id = Id, AdminCode = AdminCode };
+        }
 
-            if ( parameters != null ) {
+        public static string Get<T>( object routeValues ) where T : PageModel {
 
-                foreach ( object p in parameters ) {
+            StringBuilder result = new StringBuilder( Get<T>() + '?' );
 
-                    string s = p?.ToString();
-                    result.Append( s + '/' );
+            if ( routeValues != null ) {
+
+                Type valueType              = routeValues.GetType();
+                PropertyInfo[] properties   = valueType.GetProperties();
+
+                foreach ( PropertyInfo property in properties ) {
+
+                    result.Append( $"{ property.Name }={ property.GetValue( routeValues ) }&" );
                 }
             }
 
-            return result.ToString();
+            return result.ToString().TrimEnd( '?', '&' );
         }
 
-        public static string GetAbsolutePath<T>( HostString RequestHost, params object[] parameters ) where T : PageModel {
+        public static string GetAbsolutePath<T>( HostString RequestHost, object routeValues ) where T : PageModel {
 
-            return $"https://{ RequestHost }{ Get<T>( parameters )}";
+            return $"https://{ RequestHost }{ Get<T>( routeValues )}";
+        }
 
-            //StringBuilder result = new StringBuilder( $"https://{ RequestHost }{ Get<T>() }/" );
+        public static string GetAbsolutePath<T>( HostString RequestHost, int Id, string AdminCode ) where T : PageModel {
 
-            //if ( parameters != null ) {
-            //    foreach ( object p in parameters ) {
-
-            //        string s = p?.ToString();
-
-            //        result.Append( s + '/' );
-            //    }
-            //}
-
-            //return result.ToString();
+            return GetAbsolutePath<T>( RequestHost, AuthorizedRouteValue( Id, AdminCode ) );
         }
     }
 }

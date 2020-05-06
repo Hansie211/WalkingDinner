@@ -40,7 +40,7 @@ namespace WalkingDinner.Pages.Invitation {
             if ( Couple.Accepted ) {
 
                 // Couple has accepted / payed
-                return RedirectToPage( ModelPath.Get<EditCoupleModel>( CoupleID, AdminCode ) );
+                return Redirect( ModelPath.Get<EditCoupleModel>() );
             }
 
             return Page();
@@ -54,7 +54,7 @@ namespace WalkingDinner.Pages.Invitation {
                 return NotFound();
             }
 
-            return RedirectToPage( ModelPath.Get<PaymentModel>( CoupleID, AdminCode ) );
+            return Redirect( ModelPath.Get<PaymentModel>() );
         }
 
         public async Task<IActionResult> OnPostAccept() {
@@ -66,13 +66,15 @@ namespace WalkingDinner.Pages.Invitation {
             }
 
             if ( Couple.Dinner.HasPrice ) { // not so fast
+
                 return BadRequest();
             }
 
             Couple.Accepted = true;
             await Database.SaveChangesAsync();
 
-            return RedirectToPage( ModelPath.Get<EditCoupleModel>( CoupleID, AdminCode ) );
+            return Redirect( ModelPath.Get<EditCoupleModel>() );
+            //, new { handler = (string)null } 
         }
     }
 }

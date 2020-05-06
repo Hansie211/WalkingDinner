@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,9 +27,21 @@ namespace WalkingDinner {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices( IServiceCollection services ) {
 
+            services.AddSession();
+
+            services.AddAuthentication( "BasicAuthentication" ).AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>( "BasicAuthentication", null );
+
             services.AddDbContext<DatabaseContext>( opt => opt.UseSqlServer( Configuration.GetConnectionString( "DefaultConnection" ) ) );
 
-            services.AddRazorPages();
+            services.AddRazorPages()
+                    .AddRazorPagesOptions( options => {
+                        options.Conventions.AuthorizeFolder( "/Invitation" );
+                        options.Conventions.AuthorizeFolder( "/Management" );
+                    } );
+
+            services.AddAuthorization( options => {
+                options.AddPolicy( "AdminOnly", policy => policy.RequireAssertion( o => o.User.FindFirstValue( ClaimTypes.Role ) == "Admin" ) );
+            } );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,9 +61,11 @@ namespace WalkingDinner {
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints( endpoints => {

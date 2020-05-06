@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Emails\" />
+    <Folder Include="wwwroot\lib\jquery-ui\" />
   </ItemGroup>
 
   <ItemGroup>

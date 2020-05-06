@@ -14,98 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <span asp-validation-for="Couple" class="text-danger"></span>
 
-            <div class="form-group">
-                <label asp-for="Couple.EmailAddress" class="control-label"></label>
-                <input asp-for="Couple.EmailAddress" class="form-control" />
-                <span asp-validation-for="Couple.EmailAddress" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.DietaryGuidelines" class="control-label"></label>
-                <textarea asp-for="Couple.DietaryGuidelines" class="form-control"></textarea>
-                <span asp-validation-for="Couple.DietaryGuidelines" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.PhoneNumber" class="control-label"></label>
-                <input asp-for="Couple.PhoneNumber" class="form-control" />
-                <span asp-validation-for="Couple.PhoneNumber" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.PersonMain.FirstName" class="control-label"></label>
-                <input asp-for="Couple.PersonMain.FirstName" class="form-control" />
-                <span asp-validation-for="Couple.PersonMain.FirstName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.PersonMain.Preposition" class="control-label"></label>
-                <input asp-for="Couple.PersonMain.Preposition" class="form-control" />
-                <span asp-validation-for="Couple.PersonMain.Preposition" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.PersonMain.LastName" class="control-label"></label>
-                <input asp-for="Couple.PersonMain.LastName" class="form-control" />
-                <span asp-validation-for="Couple.PersonMain.LastName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label for="has-person-guest" class="control-label">Ik neem iemand mee</label>
-                <input id="has-person-guest" type="checkbox" @(( Model.Couple.PersonGuest != null ) ? "checked=\"checked\"" : string.Empty ) class="form-control" />
-            </div>
-
-            <div id="person-guest">
-
-                <div class="form-group">
-                    <label asp-for="Couple.PersonGuest.FirstName" class="control-label"></label>
-                    <input asp-for="Couple.PersonGuest.FirstName" class="form-control" />
-                    <span asp-validation-for="Couple.PersonGuest.FirstName" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Couple.PersonGuest.Preposition" class="control-label"></label>
-                    <input asp-for="Couple.PersonGuest.Preposition" class="form-control" />
-                    <span asp-validation-for="Couple.PersonGuest.Preposition" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Couple.PersonGuest.LastName" class="control-label"></label>
-                    <input asp-for="Couple.PersonGuest.LastName" class="form-control" />
-                    <span asp-validation-for="Couple.PersonGuest.LastName" class="text-danger"></span>
-                </div>
-
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.Address.Street" class="control-label"></label>
-                <input asp-for="Couple.Address.Street" class="form-control" />
-                <span asp-validation-for="Couple.Address.Street" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.Address.Number" class="control-label"></label>
-                <input asp-for="Couple.Address.Number" class="form-control" />
-                <span asp-validation-for="Couple.Address.Number" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.Address.NumberSuffix" class="control-label"></label>
-                <input asp-for="Couple.Address.NumberSuffix" class="form-control" />
-                <span asp-validation-for="Couple.Address.NumberSuffix" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.Address.ZipCode" class="control-label"></label>
-                <input asp-for="Couple.Address.ZipCode" class="form-control" />
-                <span asp-validation-for="Couple.Address.ZipCode" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Couple.Address.Place" class="control-label"></label>
-                <input asp-for="Couple.Address.Place" class="form-control" />
-                <span asp-validation-for="Couple.Address.Place" class="text-danger"></span>
-            </div>
+            <partial name="_CoupleView" for="Couple" />
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -114,28 +23,6 @@
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync( "_ValidationScriptsPartial" );}
 }
-
-<script type="text/javascript">
-    $(function () {
-        $('#has-person-guest').on('change', function () {
-
-            var checked = $(this).prop('checked');
-            var children = $('#person-guest').find(".form-control");
-            var disabled = (checked == true) ? false : 'disabled';
-
-            for (var i = 0; i < children.length; i++) {
-
-                var child = $(children[i]);
-                child.prop('disabled', disabled);
-            }
-        }).trigger('change');
-    });
-</script>
-

@@ -1,4 +1,4 @@
-﻿@page "{CoupleID}/{AdminCode}"
+﻿@page
 @model WalkingDinner.Pages.Management.EditDinnerModel
 @using WalkingDinner.Extensions
 @{
@@ -7,76 +7,64 @@
 
 <h1>Management</h1>
 
-<h3>@Model.AdminCode</h3>
+<div class="container-fluid col-md-8">
 
-<h3>Uitnodigen</h3>
-<form class="form-horizontal" method="post" asp-page-handler="Invite">
+    <h3>Uitnodigen</h3>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form class="form-horizontal" style="max-width:800px" method="post" asp-page-handler="Invite">
 
-    <span asp-validation-for="Invite" class="text-danger"></span>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
-        <label asp-for="Invite.Person.FirstName" class="col-sm-2 control-label">Voornaam</label>
-        <input asp-for="Invite.Person.FirstName" class="form-control" />
-        <span asp-validation-for="Invite.Person.FirstName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Invite.Person.Preposition" class="col-sm-2 control-label">Tussenvoegsel</label>
-        <input asp-for="Invite.Person.Preposition" class="form-control" />
-        <span asp-validation-for="Invite.Person.Preposition" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Invite.Person.LastName" class="col-sm-2 control-label">Achternaam</label>
-        <input asp-for="Invite.Person.LastName" class="form-control" />
-        <span asp-validation-for="Invite.Person.LastName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Invite.EmailAddress" class="col-sm-2 control-label">Email adres</label>
-        <input asp-for="Invite.EmailAddress" class="form-control" />
-        <span asp-validation-for="Invite.EmailAddress" class="text-danger"></span>
-    </div>
+        <span asp-validation-for="Invite" class="text-danger"></span>
 
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default">Uitnodigen</button>
+        <partial name="_PersonView" for="Invite.Person" />
+
+        <div class="form-group">
+            <label asp-for="Invite.EmailAddress" class="control-label">Email adres</label>
+            <input asp-for="Invite.EmailAddress" class="form-control" />
+            <span asp-validation-for="Invite.EmailAddress" class="text-danger"></span>
         </div>
-    </div>
 
-    @if ( !string.IsNullOrEmpty( (string)ViewData[ "InviteResult" ] ) ) {
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Uitnodigen</button>
+            </div>
+        </div>
+
+        @if ( !string.IsNullOrEmpty( (string)ViewData[ "InviteResult" ] ) ) {
 
         <div class="alert alert-primary">
             @ViewData[ "InviteResult" ]
         </div>
     }
 
-</form>
+    </form>
 
-<table class="table">
+    <table class="table">
 
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor( model => model.Couple.Accepted )
-            </th>
-            <th>
-                @Html.DisplayNameFor( model => model.Couple.EmailAddress )
-            </th>
-            <th>
-                @Html.DisplayNameFor( model => model.Couple.PhoneNumber )
-            </th>
-            <th>
-                Naam
-            </th>
-            <th>
-                Aantal personen
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ( var item in Model.Couple.Dinner.Couples ) {
-            @if ( item.IsAdmin ) { continue; }
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor( model => model.Couple.Accepted )
+                </th>
+                <th>
+                    @Html.DisplayNameFor( model => model.Couple.EmailAddress )
+                </th>
+                <th>
+                    @Html.DisplayNameFor( model => model.Couple.PhoneNumber )
+                </th>
+                <th>
+                    Naam
+                </th>
+                <th>
+                    Aantal personen
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ( var item in Model.Couple.Dinner.Couples ) {
+            @*@if ( item.IsAdmin ) { continue; }*@
             <tr>
                 <td>
                     @Html.DisplayFor( modelItem => item.Accepted )
@@ -98,27 +86,28 @@
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<h3>Beheer</h3>
-<form class="form-horizontal" method="post" asp-page-handler="Manage">
+    <h3>Beheer</h3>
+    <form class="form-horizontal" method="post" asp-page-handler="Manage">
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
-        <label asp-for="Couple.Dinner.Title" class="col-sm-2 control-label">Titel</label>
-        <input asp-for="Couple.Dinner.Title" class="form-control" />
-        <span asp-validation-for="Couple.Dinner.Title" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="Couple.Dinner.Title" class="col-sm-2 control-label">Titel</label>
+            <input asp-for="Couple.Dinner.Title" class="form-control" />
+            <span asp-validation-for="Couple.Dinner.Title" class="text-danger"></span>
+        </div>
 
-    @{ #warning Edit dinner }
+        @{ #warning Edit dinner }
 
-    @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
+        @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
 
         <div class="alert alert-primary">
             @ViewData[ "ManageResult" ]
         </div>
     }
 
-</form>
+    </form>
+</div>

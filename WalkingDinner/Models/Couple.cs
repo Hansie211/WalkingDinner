@@ -24,7 +24,7 @@ namespace WalkingDinner.Models {
         public string EmailAddress { get; set; }
 
         [DataType( DataType.MultilineText )]
-        [Display( Name = "Dieetwensen" )]
+        [Display( Name = "Dieetwensen / Allergieën" )]
         public string DietaryGuidelines { get; set; }
 
         [DataType( DataType.PhoneNumber )]

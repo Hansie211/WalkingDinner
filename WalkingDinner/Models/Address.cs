@@ -29,7 +29,7 @@ namespace WalkingDinner.Models {
         public string Place { get; set; }
 
         [DataType( DataType.MultilineText )]
-        [Display( Name = "Opmerking" )]
+        [Display( Name = "Extra adres regel" )]
         public string Extra { get; set; }
 
         public override void CopyFrom( Address source ) {

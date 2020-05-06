@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace WalkingDinner.Extensions {
 
@@ -60,6 +61,15 @@ namespace WalkingDinner.Extensions {
         public static string GetAbsolutePath<T>( HostString RequestHost, int Id, string AdminCode ) where T : PageModel {
 
             return GetAbsolutePath<T>( RequestHost, AuthorizedRouteValue( Id, AdminCode ) );
+        }
+
+        public static string GetAbsolutePathWithAuthorization<T>( HostString RequestHost, int Id, string AdminCode ) where T : PageModel {
+
+            StringBuilder result = new StringBuilder( GetAbsolutePath<Pages.LoginModel>( RequestHost, Id, AdminCode ) );
+
+            result.Append( $"&RedirectURL={ HttpUtility.HtmlDecode( Get<T>() ) }" );
+
+            return result.ToString();
         }
     }
 }

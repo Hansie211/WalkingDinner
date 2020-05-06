@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace WalkingDinner.Mollie.Models {
 
 
-    public class PaymentResponse {
+    public class MollieResponse {
 
         public class Link {
 
@@ -31,6 +31,8 @@ namespace WalkingDinner.Mollie.Models {
 
         public dynamic MetaData { get; set; }
 
+        public string PaymentId { get; set; }
+
         public string Status { get; set; }
 
         public bool IsCancelable { get; set; }
@@ -48,5 +50,19 @@ namespace WalkingDinner.Mollie.Models {
         public string WebhookUrl { get; set; }
 
         public Dictionary<string, Link> _links { get; set; }
+
+        public string GetLink( string key ) {
+
+            if ( _links == null ) {
+                return null;
+            }
+
+            if ( !_links.ContainsKey( key ) ) {
+
+                return null;
+            }
+
+            return _links[ key ].Href;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -63,7 +65,7 @@ namespace WalkingDinner.Mollie {
 
         // private static 
 
-        public static async Task<PaymentResponse> TestRequest() {
+        public static async Task<MollieResponse> TestRequest() {
 
             Payment payment = new Payment(){
                 Amount = new Amount( Currency.EUR, 100.00 ),
@@ -75,25 +77,70 @@ namespace WalkingDinner.Mollie {
             return await PaymentRequest( payment );
         }
 
-        public static async Task<PaymentResponse> PaymentRequest( Payment payment ) {
+        public static async Task<MollieResponse> PaymentRequest( Payment payment ) {
 
-            PaymentResponse result = await PostAsync<PaymentResponse>( "payments", payment );
-
-            if ( result == null ) {
-                return null;
-            }
-
-            return result;
+            return await PostAsync<MollieResponse>( "payments", payment );
         }
 
         public static async Task<string> GetPaymentStatus( string paymentId ) {
+
+            if ( string.IsNullOrEmpty( paymentId ) ) {
+
+                return string.Empty;
+            }
 
             dynamic result = await PostAsync<dynamic>( $"payments/{ paymentId }", new {} );
             if ( result == null ) {
                 return null;
             }
 
-            return result.status;
+            string status = result.status;
+            return status?.ToLower();
+        }
+
+        public static async Task<MollieResponse> CreateRefund( string paymentId, double amount ) {
+
+            if ( string.IsNullOrEmpty( paymentId ) ) {
+
+                return null;
+            }
+
+            return await PostAsync<MollieResponse>( $"payments/{ paymentId }/refunds", new { Amount = new Amount( Currency.EUR, amount ) } );
+        }
+
+        public static string TranslateStatus( string paymentStatus ) {
+
+            switch ( paymentStatus ) {
+
+                case "canceled":
+                    return "Geannuleerd";
+
+                case "expired":
+                    return "Verlopen";
+
+                case "failed":
+                    return "Mislukt";
+
+                case "pending":
+                    return "Is behandeling";
+
+                case "paid":
+                    return "Betaald";
+            }
+
+            return "Geen";
+        }
+
+        public static bool TransactionPending( string paymentStatus ) {
+
+            switch ( paymentStatus ) {
+
+                case "paid":
+                case "pending":
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

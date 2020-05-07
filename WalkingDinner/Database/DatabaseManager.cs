@@ -147,20 +147,6 @@ namespace WalkingDinner.Database {
             return await Database.Couples.Where( o => o.Dinner.ID == dinnerId ).ToListAsync();
         }
 
-        public async Task<bool> CoupleHasAccepted( int Id, string AdminCode ) {
-
-            Couple couple = await Database.Couples.FindAsync( Id );
-            if ( couple == null ) {
-                return false;
-            }
-
-            if ( couple.AdminCode != AdminCode ) {
-                return false;
-            }
-
-            return couple.Accepted;
-        }
-
         public async Task<Couple> UpdateCoupleAsync( int Id, Couple coupleData ) {
 
             Couple couple = await GetCoupleAsync( Id );

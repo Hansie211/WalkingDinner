@@ -29,14 +29,10 @@ namespace WalkingDinner.Pages.Couples {
                 return NotFound();
             }
 
-            if ( Couple.PaymentStatus != null && Couple.PaymentId != null && !Couple.HasPayed ) {
+            var status = await Couple.UpdatePaymentStatus();
+            if ( status.Changed ) {
 
-                string paymentStatus = await MollieAPI.GetPaymentStatus( Couple.PaymentId );
-                if ( paymentStatus != Couple.PaymentStatus ) {
-
-                    Couple.PaymentStatus = paymentStatus;
-                    await Database.SaveChangesAsync();
-                }
+                await Database.SaveChangesAsync();
             }
 
             return Page();
@@ -44,19 +40,29 @@ namespace WalkingDinner.Pages.Couples {
 
         public async Task<IActionResult> OnPostAsync() {
 
+            var coupleData = Couple;
+            // Reload database
+            Couple = await GetAuthorizedCouple();
+
             if ( !ModelState.IsValid ) {
-                return await OnGetAsync();
+                return Page();
             }
 
-            if ( await Database.UpdateCoupleAsync( AuthorizedID, Couple ) == null ) {
+            if ( Couple.Dinner.HasPrice && string.IsNullOrEmpty( coupleData.IBAN ) ) {
+
+                ModelState.AddModelError( "IBAN", "Bankrekening is verplicht!" );
+                return Page();
+            }
+
+            if ( await Database.UpdateCoupleAsync( AuthorizedID, coupleData ) == null ) {
 
                 ModelState.AddModelError( "Couple", "Kan nu niet opslaan, probeer het later opnieuw." );
-                return await OnGetAsync();
+                return Page();
             }
 
             ViewData[ "status" ] = "Wijzigingen opgeslagen!";
 
-            return await OnGetAsync();
+            return Page();
         }
 
     }

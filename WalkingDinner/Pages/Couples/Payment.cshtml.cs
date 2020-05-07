@@ -36,12 +36,13 @@ namespace WalkingDinner.Pages.Couples {
                 return Redirect( ModelPath.Get<Couples.EditCoupleModel>() );
             }
 
-            PaymentStatus = await MollieAPI.GetPaymentStatus( Couple.PaymentId );
-            if ( PaymentStatus != Couple.PaymentStatus ) {
+            var status = await Couple.UpdatePaymentStatus();
+            if ( status.Changed ) {
 
-                Couple.PaymentStatus = PaymentStatus;
                 await Database.SaveChangesAsync();
             }
+
+            PaymentStatus = status.NewStatus;
 
             return Page();
         }

@@ -36,7 +36,7 @@ namespace WalkingDinner {
             services.AddRazorPages()
                     .AddRazorPagesOptions( options => {
                         options.Conventions.AuthorizeFolder( "/Invitation" );
-                        options.Conventions.AuthorizeFolder( "/Management" );
+                        options.Conventions.AuthorizeFolder( "/Management", "AdminOnly" );
                     } );
 
             services.AddAuthorization( options => {

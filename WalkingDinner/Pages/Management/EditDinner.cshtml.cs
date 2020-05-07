@@ -12,7 +12,6 @@ using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
 
-    [Authorize( Policy = "AdminOnly" )]
     public class EditDinnerModel : DataBoundModel {
 
         public EditDinnerModel( DatabaseContext context ) : base( context ) {

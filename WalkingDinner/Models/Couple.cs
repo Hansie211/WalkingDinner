@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using WalkingDinner.Mollie;
+using WalkingDinner.Mollie.Models;
 
 namespace WalkingDinner.Models {
 
@@ -97,6 +99,37 @@ namespace WalkingDinner.Models {
             }
 
             return result;
+        }
+
+        public struct PaymentUpdate {
+            public string OldStatus { get; set; }
+            public string NewStatus { get; set; }
+            public bool Changed { get => OldStatus != NewStatus; }
+        }
+
+        public async Task<PaymentUpdate> UpdatePaymentStatus() {
+
+            PaymentUpdate update = new PaymentUpdate();
+
+            if ( string.IsNullOrEmpty( PaymentId ) ) {
+                return update;
+            }
+
+            update.OldStatus = PaymentStatus;
+
+            if ( HasPayed ) {
+
+                update.NewStatus = update.OldStatus;
+                return update;
+            }
+
+            update.NewStatus = await MollieAPI.GetPaymentStatus( PaymentId );
+
+            if ( update.Changed ) {
+                PaymentStatus = update.NewStatus;
+            }
+
+            return update;
         }
     }
 }

@@ -13,7 +13,6 @@ using WalkingDinner.Models;
 
 namespace WalkingDinner.Pages.Management {
 
-    [Authorize( Policy = "AdminOnly" )]
     public class RemoveCoupleModel : DataBoundModel {
 
         public RemoveCoupleModel( DatabaseContext context ) : base( context ) {

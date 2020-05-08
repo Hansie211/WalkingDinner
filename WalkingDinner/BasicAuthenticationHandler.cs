@@ -27,14 +27,6 @@ namespace WalkingDinner {
 
         protected override Task HandleChallengeAsync( AuthenticationProperties properties ) {
 
-            //if ( TokenExpired ) {
-
-            //    Response.StatusCode = 419;
-            //    return Task.FromResult( true );
-            //}
-
-            // Red
-
             return base.HandleChallengeAsync( properties );
         }
 

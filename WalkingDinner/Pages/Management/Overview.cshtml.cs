@@ -9,6 +9,7 @@ using WalkingDinner.Calculation.Models;
 using WalkingDinner.Database;
 using WalkingDinner.Extensions;
 using WalkingDinner.Models;
+using WalkingDinner.PDF;
 
 namespace WalkingDinner.Pages.Management {
 
@@ -16,12 +17,6 @@ namespace WalkingDinner.Pages.Management {
 
         public OverviewModel( DatabaseContext context ) : base( context ) {
         }
-
-        [BindProperty( SupportsGet = true )]
-        public int CoupleID { get; set; }
-
-        [BindProperty( SupportsGet = true )]
-        public string AdminCode { get; set; }
 
         public Couple Couple { get; set; }
 
@@ -36,6 +31,8 @@ namespace WalkingDinner.Pages.Management {
 
         [BindProperty]
         public Dictionary<string, bool> CourseSelection { get; set; }
+
+        public int CoupleCount { get; set; }
 
         private async Task<IActionResult> GetCoupleAsync() {
 
@@ -68,6 +65,15 @@ namespace WalkingDinner.Pages.Management {
                 return getResult;
             }
 
+            CoupleCount = 0;
+            foreach ( Couple couple in Couple.Dinner.Couples ) {
+
+                if ( !Couple.Dinner.HasPrice || couple.HasPayed ) {
+
+                    CoupleCount++;
+                }
+            }
+
             CourseSelection = MenuItems.ToDictionary( x => x.Key, x => x.Value );
 
             return Page();
@@ -75,14 +81,23 @@ namespace WalkingDinner.Pages.Management {
 
         public async Task<IActionResult> OnPostAsync() {
 
-            if ( !ModelState.IsValid ) {
-                return Page();
-            }
-
             var getResult = await GetCoupleAsync();
             if ( getResult != null ) {
 
                 return getResult;
+            }
+
+            CoupleCount = 0;
+            foreach ( Couple couple in Couple.Dinner.Couples ) {
+
+                if ( !Couple.Dinner.HasPrice || couple.HasPayed ) {
+
+                    CoupleCount++;
+                }
+            }
+
+            if ( !ModelState.IsValid ) {
+                return Page();
             }
 
             int courseCount = 0;
@@ -100,18 +115,24 @@ namespace WalkingDinner.Pages.Management {
                 return Page();
             }
 
-            int totalCoupleCount    = Couple.Dinner.Couples.Count;
             int couplesPerGroup     = courseCount;
 
-            int parallelMealCount   = totalCoupleCount / couplesPerGroup;
+            int parallelMealCount   = CoupleCount / couplesPerGroup;
 
             // Rounding errors:
-            totalCoupleCount = parallelMealCount * couplesPerGroup;
+            CoupleCount = parallelMealCount * couplesPerGroup;
+
+            // Load the dinner into memory
+            // await Database.GetDinnerAsync( Couple.Dinner.ID )
 
             Couple[] allCouples = ( await Database.GetCouplesAsync( Couple.Dinner.ID ) ).ToArray();
+            if ( Couple.Dinner.HasPrice ) {
+                allCouples = allCouples.Where( o => o.HasPayed ).ToArray();
+            }
+
             Schema schema       = Schema.GenerateSchema( allCouples, courseCount );
 
-            if ( !Schema.ValidSchema( schema, allCouples, totalCoupleCount ) ) {
+            if ( ( schema == null ) || !Schema.ValidSchema( schema, allCouples, CoupleCount ) ) {
 
                 // ERROR
 
@@ -163,12 +184,27 @@ namespace WalkingDinner.Pages.Management {
                 }
             }
 
+#warning 9 couples in schema, 10 in list
 
-            PDF.Letter.Generate( allCouples[ 0 ], allCouples[ 1 ] );
+            List<Route> routes = new List<Route>();
 
+            foreach ( Couple couple in allCouples ) {
 
-            ViewData[ "message" ] = "Schema is opgeslagen.";
-            return Page();
+                for ( int i = 0; i < schema.Courses.Length; i++ ) {
+
+                    Meal meal   = schema.Courses[i].GetMealForCouple( couple );
+                    Couple chef = meal.Couples[i];
+
+                    routes.Add( new Route( couple, chef, i ) );
+                }
+            }
+
+            byte[] pdf = Letter.Generate( routes, courseCount );
+
+            return File( pdf, System.Net.Mime.MediaTypeNames.Application.Pdf, "schema.pdf" );
+
+            //ViewData[ "message" ] = "Schema is opgeslagen.";
+            //return Page();
         }
     }
 }

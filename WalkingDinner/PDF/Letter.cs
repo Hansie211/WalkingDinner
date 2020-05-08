@@ -3,44 +3,140 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using WalkingDinner.Calculation.Models;
 using WalkingDinner.Models;
 
 namespace WalkingDinner.PDF {
 
     public static class Letter {
 
-        // public static string GenerateHTML()
+        private static string GetTemplatePath( string templatename ) {
 
-        public static void Generate( Couple subject, Couple destination ) {
+            return Path.Combine( Directory.GetCurrentDirectory(), "PDF", "template", templatename );
+        }
 
-            string HTML = $@"<html>
-                            <head>
-                            </head>
-                            <body>
-                                <h1>Beste { subject.GetName() }</h1>
-                                <h3>Jullie volgende bestemming is:</h3>
-                                <h2>{ destination.GetName() }</h2>
-                            </body>
-                            </html>";
+        private static string GetTemplate( string templatename ) {
+
+            return File.ReadAllText( GetTemplatePath( templatename ) );
+        }
+
+        private static string GenerateTemplate( string template, object templateValues ) {
+
+            if ( templateValues != null ) {
+
+                Type valueType              = templateValues.GetType();
+                PropertyInfo[] properties   = valueType.GetProperties();
+
+                foreach ( PropertyInfo property in properties ) {
+
+                    template = template.Replace( $"%{ property.Name.ToUpper() }%", property.GetValue( templateValues ).ToString() );
+                }
+            }
+
+            return template;
+        }
+
+        private static IEnumerable<Route> GetRoutes( List<Route> routes, Route route, int courseCount ) {
+
+            List<Route> result = new List<Route>();
+
+            if ( route.CourseIndex >= courseCount - 1 ) {
+                return result;
+            }
+
+            IEnumerable<Route> Guests = routes.Where( o => o.CourseIndex == route.CourseIndex && o.To == route.Subject );
+
+            foreach ( Route guest in Guests ) {
+
+                Route next = routes.Where( o => ( o.CourseIndex == route.CourseIndex + 1) && ( o.Subject == guest.Subject ) ).FirstOrDefault();
+                if ( next == null ) {
+                    continue;
+                }
+
+                if ( next.To == next.Subject ) {
+
+                    result.AddRange( GetRoutes( routes, next, courseCount ) );
+                }
+
+                result.Add( next );
+            }
+
+            return result;
+        }
+
+        private static string GenerateHTML( List<Route> routes, int courseCount ) {
+
+            string document = GetTemplate("document.html");
+            string block = GetTemplate("document.block.html");
+            string stack = GetTemplate("document.stack.html");
+
+            int index = 0;
+
+            DateTime baseTime = new DateTime( 2000, 1, 1, 18, 0, 0 );
+
+            StringBuilder content = new StringBuilder();
+            foreach ( Route route in routes ) {
+
+                string item;
+
+                if ( route.Subject == route.To ) {
+
+                    // For the chef
+                    item = GenerateTemplate( stack, new {
+
+                        Subject = route.Subject.GetName(),
+                        List = string.Join( "\n", GetRoutes( routes, route, courseCount ).Select( o => $"<li>{ o.Subject.GetName() } in ronde { o.CourseIndex + 1 }</li>" ) ),
+                        Course = ( route.CourseIndex == 0 ) ? "'start'" : ( route.CourseIndex ).ToString(),
+                        //Course = route.CourseIndex + 1,
+                    } );
+
+                } else {
+
+                    item = GenerateTemplate( block, new {
+                        Subject = route.Subject.GetName(),
+                        Course = ( route.CourseIndex == 0 ) ? "'start'" : ( route.CourseIndex ).ToString(),
+                        To = route.To.GetName(),
+                        Street = route.To.Address.GetAsLine(),
+                        Time = baseTime.AddMinutes( 30 * route.CourseIndex ).ToString( "HH:mm" )
+                    } );
+                }
+
+                content.AppendLine( item );
+
+                if ( ++index >= 3 ) {
+
+                    // Break page
+                    content.AppendLine( "<p style=\"page-break-before: always\"></p>" );
+                    index = 0;
+                }
+            }
+
+            document = GenerateTemplate( document, new { Content = content.ToString() } );
+
+            return document;
+        }
+
+        public static byte[] Generate( List<Route> routes, int courseCount ) {
+
+            string HTML = GenerateHTML( routes, courseCount );
 
             var globalSettings = new GlobalSettings
             {
                 ColorMode = ColorMode.Color,
                 Orientation = Orientation.Portrait,
                 PaperSize = PaperKind.A4,
-                Margins = new MarginSettings { Top = 10 },
-                DocumentTitle = "PDF Report",
-                Out = @"X:\test.pdf"
+                DPI = 300,
+                DocumentTitle = "Schema",
+                // Out = @"X:\test.pdf"
             };
 
             var objectSettings = new ObjectSettings
             {
-                //PagesCount = true,
                 HtmlContent = HTML,
-                //WebSettings     = { DefaultEncoding = "utf-8", UserStyleSheet =  Path.Combine( Directory.GetCurrentDirectory(), "assets", "styles.css") },
-                //HeaderSettings  = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-                //FooterSettings  = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+                WebSettings     = { DefaultEncoding = "utf-8", UserStyleSheet =  GetTemplatePath( "document.css" ) },
             };
 
             var doc = new HtmlToPdfDocument()
@@ -50,9 +146,7 @@ namespace WalkingDinner.PDF {
             };
 
             var converter = new BasicConverter(new PdfTools());
-            //converter.Convert( pdf );
-
-            byte[] pdf = converter.Convert(doc);
+            return converter.Convert( doc );
         }
     }
 }

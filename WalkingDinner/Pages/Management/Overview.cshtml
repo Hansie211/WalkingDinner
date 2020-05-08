@@ -1,8 +1,7 @@
-﻿@page "{CoupleID}/{AdminCode}"
+﻿@page
 @model WalkingDinner.Pages.Management.OverviewModel
 @{
     ViewData[ "Title" ] = "Overview";
-    int coupleCount     = Model.Couple.Dinner.Couples.Count;
 }
 <div class="container">
     <br />
@@ -11,7 +10,7 @@
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <h4>Er hebben zich @coupleCount duo's aangemeld Kies hieronder het schema voor het diner:</h4>
+        <h4>Er hebben zich @Model.CoupleCount duo's aangemeld Kies hieronder het schema voor het diner:</h4>
         <hr />
 
         <h3>Aantal gangen:</h3>
@@ -79,8 +78,8 @@
                 return;
             }
 
-            var rounds = Math.floor(( @coupleCount ) / (courseCount));
-            var leftoverCouples = @coupleCount - rounds * courseCount;
+            var rounds = Math.floor(( @Model.CoupleCount ) / (courseCount));
+            var leftoverCouples = @Model.CoupleCount - rounds * courseCount;
 
             if ( leftoverCouples > 0 ) {
 

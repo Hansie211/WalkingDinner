@@ -45,6 +45,16 @@ namespace WalkingDinner.Models {
             Place = source.Place;
             Extra = source.Extra;
         }
+
+        public string GetAsLine() {
+
+            string result = $"{ Street } {Number}";
+            if ( !string.IsNullOrEmpty( NumberSuffix ) ) {
+                result += NumberSuffix.ToUpper();
+            }
+
+            return result;
+        }
     }
 
     public class CoupleAddress : Address {

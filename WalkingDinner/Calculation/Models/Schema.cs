@@ -23,24 +23,66 @@ namespace WalkingDinner.Calculation.Models {
             }
         }
 
+        private static bool IsValidShuffle( int index, int courseCount, int parallelCount ) {
+
+            int shuffle = 0;
+
+            for ( int i = 1; i < courseCount; i++ ) {
+
+                shuffle = ( shuffle + index ) % parallelCount;
+                if ( shuffle == 0 ) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static IEnumerable<int> GetValidShuffles( int courseCount, int parallelCount ) {
+
+            // '0' is always valid
+            // yield return 0;
+
+            for ( int i = 1; i < parallelCount; i++ ) {
+
+                if ( !IsValidShuffle( i, courseCount, parallelCount ) ) {
+                    continue;
+                }
+
+                yield return i;
+            }
+        }
+
         public static Schema GenerateSchema( Couple[] allCouples, int courseCount ) {
 
-            // ShuffleArray( ref allCouples );
+            ShuffleArray( ref allCouples );
             int coupleCount     = allCouples.Length;
 
             int parallelCount   = coupleCount / courseCount;
             int couplesPerMeal  = courseCount;
+            int totalCouples    = couplesPerMeal * parallelCount;
+
+            int newPeoplePerGroup = couplesPerMeal - 1;
+            if ( newPeoplePerGroup * courseCount > totalCouples ) { // impossible
+                return null;
+            }
+
+            int[] validShuffles = GetValidShuffles( courseCount, parallelCount ).ToArray();
+            if ( validShuffles.Length + 1 < courseCount ) { // '0' is always valid
+
+                return null;
+            }
 
             Schema schema       = new Schema( courseCount, couplesPerMeal );
             schema.Courses[ 0 ] = Course.SeedCourse( allCouples, parallelCount, couplesPerMeal );
 
-            for ( int i = 1; i<courseCount; i++ ) {
+            for ( int i = 1; i < courseCount; i++ ) {
 
-                Course course = Course.CopyFrom( schema.Courses[ i-1 ] );
+                Course course = Course.CopyFrom( schema.Courses[ 0 ] );
 
                 for ( int j = 1; j < couplesPerMeal; j++ ) {
 
-                    int shiftcount = j;
+                    int shiftcount = (j * validShuffles[i-1]) % parallelCount;
 
                     course.Shift( j, shiftcount );
                 }

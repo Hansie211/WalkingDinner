@@ -41,16 +41,31 @@ namespace WalkingDinner.Calculation.Models {
 
         public void Shift( int whichCouple, int howMuch ) {
 
-            for ( int i = 0; i < howMuch; i++ ) {
+            howMuch %= Meals.Length;
+            if ( howMuch < 1 ) {
+                return;
+            }
 
-                var temp = Meals[0].Couples[whichCouple];
+            // Setup an array
+            Couple[] array = new Couple[Meals.Length];
+            for ( int i = 0; i < Meals.Length; i++ ) {
+                array[ i ] = Meals[ i ].Couples[ whichCouple ];
+            }
 
-                for ( int j = 0; j < Meals.Length - 1; j++ ) {
+            // Break up the array
+            Couple[] partA = new Couple[howMuch];
+            Couple[] partB = new Couple[Meals.Length - howMuch];
 
-                    Meals[ j ].Couples[ whichCouple ] = Meals[ j+1 ].Couples[ whichCouple ];
-                }
+            Array.Copy( array, 0, partA, 0, howMuch );
+            Array.Copy( array, howMuch, partB, 0, Meals.Length - howMuch );
 
-                Meals[ Meals.Length - 1 ].Couples[ whichCouple ] = temp;
+            // Reconstruct the array
+            Array.Copy( partB, 0, array, 0, partB.Length );
+            Array.Copy( partA, 0, array, partB.Length, partA.Length );
+
+            // Copy the results back
+            for ( int i = 0; i < Meals.Length; i++ ) {
+                Meals[ i ].Couples[ whichCouple ] = array[ i ];
             }
         }
 

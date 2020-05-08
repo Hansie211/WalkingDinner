@@ -12,18 +12,7 @@ We hebben ons project opgezet in ASP.NET Core, omdat dit moderner, cross-platfor
 
 ![https://hackernoon.com/hn-images/1*XGFMlY2nwVoFOCUU6jpw-A.png](https://hackernoon.com/hn-images/1*XGFMlY2nwVoFOCUU6jpw-A.png)
 # Opbouw en documentatie van code 
-````mermaid
-graph TD
-A[Hoofdpagina]  --> B(Nieuw diner)
-B --> C(Administrator krijgt een email met code)
-B --> X[/Titel, beschrijving, verzamelpunt,<br />prijs, gegevens van aanmaker/]
-C --> D(Beheerders spagina)
-D --> E(Diner aanpassen)
-D --> F(Gast uitnodigen)
-F --> G(Gast krijgt email met code)
-G --> H("Gast kan informatie invullen o.a.<br />#40;naam, adres, dieetwensen, plus 1&#41;")
-D -->|Na uiterste inschrijfdatum| I(Administrator kiest gangen<br />op basis van aantal aanmeldingen)
-I --> J(Server maakt verdeling, stuurt gasten email<br />met wanneer zij moeten koken en genereert<br />pdf met dinergegevens.)
+![https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbkFbSG9vZmRwYWdpbmFdIC0tPiBCKE5pZXV3IGRpbmVyKVxuQiAtLT4gQyhBZG1pbmlzdHJhdG9yIGtyaWpndCBlZW4gZW1haWwgbWV0IGNvZGUpXG5CIC0tPiBYWy9UaXRlbCwgYmVzY2hyaWp2aW5nLCB2ZXJ6YW1lbHB1bnQsPGJyIC8-cHJpanMsIGdlZ2V2ZW5zIHZhbiBhYW5tYWtlci9dXG5DIC0tPiBEKEJlaGVlcmRlcnMgc3BhZ2luYSlcbkQgLS0-IEUoRGluZXIgYWFucGFzc2VuKVxuRCAtLT4gRihHYXN0IHVpdG5vZGlnZW4pXG5GIC0tPiBHKEdhc3Qga3Jpamd0IGVtYWlsIG1ldCBjb2RlKVxuRyAtLT4gSChcIkdhc3Qga2FuIGluZm9ybWF0aWUgaW52dWxsZW4gby5hLjxiciAvPiM0MDtuYWFtLCBhZHJlcywgZGllZXR3ZW5zZW4sIHBsdXMgMSYjNDE7XCIpXG5EIC0tPnxOYSB1aXRlcnN0ZSBpbnNjaHJpamZkYXR1bXwgSShBZG1pbmlzdHJhdG9yIGtpZXN0IGdhbmdlbjxiciAvPm9wIGJhc2lzIHZhbiBhYW50YWwgYWFubWVsZGluZ2VuKVxuSSAtLT4gSihTZXJ2ZXIgbWFha3QgdmVyZGVsaW5nLCBzdHV1cnQgZ2FzdGVuIGVtYWlsPGJyIC8-bWV0IHdhbm5lZXIgemlqIG1vZXRlbiBrb2tlbiBlbiBnZW5lcmVlcnQ8YnIgLz5wZGYgbWV0IGRpbmVyZ2VnZXZlbnMuKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbkFbSG9vZmRwYWdpbmFdIC0tPiBCKE5pZXV3IGRpbmVyKVxuQiAtLT4gQyhBZG1pbmlzdHJhdG9yIGtyaWpndCBlZW4gZW1haWwgbWV0IGNvZGUpXG5CIC0tPiBYWy9UaXRlbCwgYmVzY2hyaWp2aW5nLCB2ZXJ6YW1lbHB1bnQsPGJyIC8-cHJpanMsIGdlZ2V2ZW5zIHZhbiBhYW5tYWtlci9dXG5DIC0tPiBEKEJlaGVlcmRlcnMgc3BhZ2luYSlcbkQgLS0-IEUoRGluZXIgYWFucGFzc2VuKVxuRCAtLT4gRihHYXN0IHVpdG5vZGlnZW4pXG5GIC0tPiBHKEdhc3Qga3Jpamd0IGVtYWlsIG1ldCBjb2RlKVxuRyAtLT4gSChcIkdhc3Qga2FuIGluZm9ybWF0aWUgaW52dWxsZW4gby5hLjxiciAvPiM0MDtuYWFtLCBhZHJlcywgZGllZXR3ZW5zZW4sIHBsdXMgMSYjNDE7XCIpXG5EIC0tPnxOYSB1aXRlcnN0ZSBpbnNjaHJpamZkYXR1bXwgSShBZG1pbmlzdHJhdG9yIGtpZXN0IGdhbmdlbjxiciAvPm9wIGJhc2lzIHZhbiBhYW50YWwgYWFubWVsZGluZ2VuKVxuSSAtLT4gSihTZXJ2ZXIgbWFha3QgdmVyZGVsaW5nLCBzdHV1cnQgZ2FzdGVuIGVtYWlsPGJyIC8-bWV0IHdhbm5lZXIgemlqIG1vZXRlbiBrb2tlbiBlbiBnZW5lcmVlcnQ8YnIgLz5wZGYgbWV0IGRpbmVyZ2VnZXZlbnMuKSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
 # Werkt het eind-product
 Ja.

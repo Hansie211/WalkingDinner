@@ -88,7 +88,7 @@ namespace WalkingDinner.PDF {
                     item = GenerateTemplate( stack, new {
 
                         Subject = route.Subject.GetName(),
-                        List = string.Join( "\n", GetRoutes( routes, route, courseCount ).Select( o => $"<li>{ o.Subject.GetName() } in ronde { o.CourseIndex + 1 }</li>" ) ),
+                        List = string.Join( "\n", GetRoutes( routes, route, courseCount ).Select( o => $"<li>{ o.Subject.GetName() } in ronde { o.CourseIndex }</li>" ) ),
                         Course = ( route.CourseIndex == 0 ) ? "'start'" : ( route.CourseIndex ).ToString(),
                         //Course = route.CourseIndex + 1,
                     } );
@@ -144,6 +144,8 @@ namespace WalkingDinner.PDF {
                 GlobalSettings = globalSettings,
                 Objects = { objectSettings }
             };
+
+            File.WriteAllText( @"X:\test.html", HTML );
 
             var converter = new BasicConverter(new PdfTools());
             return converter.Convert( doc );

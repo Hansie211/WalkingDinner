@@ -13,10 +13,10 @@ body, html {
     position: relative;
     height: 300px;
     font-family: localfont, Calibri;
-    border: 1px solid black;
-    border-left: 0;
-    border-right: 0;
+    border-bottom: 1px solid black;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
     margin-bottom: 10px;
 }
 
@@ -31,6 +31,7 @@ body, html {
 .body {
     padding-top: 10px;
     position: relative;
+    height: 100%;
 }
 
 .to {

@@ -12,7 +12,7 @@ We hebben ons project opgezet in ASP.NET Core, omdat dit moderner, cross-platfor
 
 ![https://hackernoon.com/hn-images/1*XGFMlY2nwVoFOCUU6jpw-A.png](https://hackernoon.com/hn-images/1*XGFMlY2nwVoFOCUU6jpw-A.png)
 # Opbouw en documentatie van code 
-```mermaid  
+````mermaid
 graph TD
 A[Hoofdpagina]  --> B(Nieuw diner)
 B --> C(Administrator krijgt een email met code)

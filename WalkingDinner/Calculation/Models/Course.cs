@@ -18,7 +18,7 @@ namespace WalkingDinner.Calculation.Models {
             int index = 0;
             foreach ( Meal meal in course.Meals ) {
 
-                for ( int i = 0; i < meal.Couples.Length; i++ ) {
+                for ( int i = 0; i < meal.CoupleCount; i++ ) {
 
                     meal.Couples[ i ] = allCouples[ index ];
                     index++;
@@ -33,7 +33,7 @@ namespace WalkingDinner.Calculation.Models {
             Course course = new Course( source.Meals.Length, source.CouplesPerMeal );
             for ( int i = 0; i < source.Meals.Length; i++ ) {
 
-                Array.Copy( source.Meals[ i ].Couples, course.Meals[ i ].Couples, source.Meals[ i ].Couples.Length );
+                Array.Copy( source.Meals[ i ].Couples, course.Meals[ i ].Couples, source.Meals[ i ].CoupleCount );
             }
 
             return course;

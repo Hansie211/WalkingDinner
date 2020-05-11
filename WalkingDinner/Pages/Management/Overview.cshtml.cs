@@ -87,14 +87,11 @@ namespace WalkingDinner.Pages.Management {
                 return getResult;
             }
 
-            CoupleCount = 0;
-            foreach ( Couple couple in Couple.Dinner.Couples ) {
-
-                if ( !Couple.Dinner.HasPrice || couple.HasPayed ) {
-
-                    CoupleCount++;
-                }
+            Couple[] allCouples = ( await Database.GetCouplesAsync( Couple.Dinner.ID ) ).ToArray();
+            if ( Couple.Dinner.HasPrice ) {
+                allCouples = allCouples.Where( o => o.HasPayed ).ToArray();
             }
+            CoupleCount = allCouples.Length;
 
             if ( !ModelState.IsValid ) {
                 return Page();
@@ -116,21 +113,11 @@ namespace WalkingDinner.Pages.Management {
             }
 
             int couplesPerGroup     = courseCount;
-
             int parallelMealCount   = CoupleCount / couplesPerGroup;
 
             // Rounding errors:
-            CoupleCount = parallelMealCount * couplesPerGroup;
-
-            // Load the dinner into memory
-            // await Database.GetDinnerAsync( Couple.Dinner.ID )
-
-            Couple[] allCouples = ( await Database.GetCouplesAsync( Couple.Dinner.ID ) ).ToArray();
-            if ( Couple.Dinner.HasPrice ) {
-                allCouples = allCouples.Where( o => o.HasPayed ).ToArray();
-            }
-
-            Schema schema       = Schema.GenerateSchema( allCouples, courseCount );
+            CoupleCount     = parallelMealCount * couplesPerGroup;
+            Schema schema   = Schema.GenerateSchema( allCouples, courseCount );
 
             if ( ( schema == null ) || !Schema.ValidSchema( schema, allCouples, CoupleCount ) ) {
 
@@ -138,6 +125,32 @@ namespace WalkingDinner.Pages.Management {
 
                 ViewData[ "Schema-error" ] =  "Huidige indeling is niet mogelijk.";
                 return Page();
+            }
+
+            // Add the remaing couples
+            int remainingCoupleCount = allCouples.Length - CoupleCount;
+            if ( remainingCoupleCount > 0 ) {
+
+                Couple[] remainingCouples = new Couple[ parallelMealCount ];
+                Array.Copy( allCouples, allCouples.Length - remainingCoupleCount, remainingCouples, 0, remainingCoupleCount );
+
+                foreach ( Course course in schema.Courses ) {
+
+                    for ( int i = 0; i < parallelMealCount; i++ ) {
+
+                        course.Meals[ i ].Couples[ course.Meals[ i ].Couples.Length - 1 ] = remainingCouples[ i ];
+                    }
+
+                    // Inverse shift
+                    var temp = remainingCouples[0];
+                    for ( int i = 1; i < remainingCouples.Length; i++ ) {
+
+                        remainingCouples[ i-1 ] = remainingCouples[ i ];
+                    }
+
+                    remainingCouples[ remainingCouples.Length - 1 ] = temp;
+                }
+
             }
 
             // Send emails
@@ -162,6 +175,10 @@ namespace WalkingDinner.Pages.Management {
                     bool hasGuidelines = false;
                     foreach ( Couple couple in meal.Couples ) {
 
+                        if ( couple == null ) {
+                            continue;
+                        }
+
                         if ( couple == chef ) {
                             continue;
                         }
@@ -183,8 +200,6 @@ namespace WalkingDinner.Pages.Management {
                     EmailServer.SendEmail( chef.EmailAddress, "Walking dinner!", emailBody.ToString() );
                 }
             }
-
-#warning 9 couples in schema, 10 in list
 
             List<Route> routes = new List<Route>();
 

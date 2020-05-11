@@ -106,6 +106,10 @@ namespace WalkingDinner.Calculation.Models {
 
                 foreach ( Couple otherCouple in meal.Couples ) {
 
+                    if ( otherCouple == null ) {
+                        continue;
+                    }
+
                     if ( couple == otherCouple ) {
                         continue;
                     }

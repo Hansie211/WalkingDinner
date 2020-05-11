@@ -169,7 +169,20 @@ namespace WalkingDinner.Pages.Management {
                     }
                     emailBody.AppendLine( "," );
 
-                    emailBody.AppendLine( $"Jij/jullie gaan koken in ronde { i + 1 }! Jullie maken een '{ CourseSelection.Keys.ElementAt( i ) }'." );
+                    int count = 0;
+                    foreach ( Couple couple in meal.Couples ) {
+
+                        if ( couple == null ) {
+                            continue;
+                        }
+
+                        count++;
+                        if ( couple.PersonGuest != null ) {
+                            count++;
+                        }
+                    }
+
+                    emailBody.AppendLine( $"Jij/jullie gaan koken in ronde { i + 1 }! Jullie maken een '{ CourseSelection.Keys.ElementAt( i ) }' voor { count } mensen (inclusief jezelf)." );
                     emailBody.AppendLine( "De volgende dieetwensen zijn opgegeven:" );
 
                     bool hasGuidelines = false;

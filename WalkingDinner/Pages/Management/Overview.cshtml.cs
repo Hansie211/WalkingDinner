@@ -24,8 +24,8 @@ namespace WalkingDinner.Pages.Management {
 
             new KeyValuePair<string, bool>( "Aperitief met amuse",  false ),
             new KeyValuePair<string, bool>( "Koud voorgerecht",     true ),
-            new KeyValuePair<string, bool>( "Warm voorgerecht",     true ),
-            new KeyValuePair<string, bool>( "Hoofdgerecht",         false ),
+            new KeyValuePair<string, bool>( "Warm voorgerecht",     false ),
+            new KeyValuePair<string, bool>( "Hoofdgerecht",         true ),
             new KeyValuePair<string, bool>( "Nagerecht",            true ),
         };
 

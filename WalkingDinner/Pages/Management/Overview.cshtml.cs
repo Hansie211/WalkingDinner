@@ -214,7 +214,7 @@ namespace WalkingDinner.Pages.Management {
                 }
             }
 
-            byte[] pdf = Letter.Generate( routes, courseCount );
+            byte[] pdf = Letter.Generate( routes, courseCount, Couple.Dinner.Date );
 
             return File( pdf, System.Net.Mime.MediaTypeNames.Application.Pdf, "schema.pdf" );
 

@@ -67,7 +67,7 @@ namespace WalkingDinner.PDF {
             return result;
         }
 
-        private static string GenerateHTML( List<Route> routes, int courseCount ) {
+        private static string GenerateHTML( List<Route> routes, int courseCount, DateTime startTime ) {
 
             string document = GetTemplate("document.html");
             string block = GetTemplate("document.block.html");
@@ -75,7 +75,7 @@ namespace WalkingDinner.PDF {
 
             int index = 0;
 
-            DateTime baseTime = new DateTime( 2000, 1, 1, 18, 0, 0 );
+            // DateTime baseTime = new DateTime( 2000, 1, 1, 18, 0, 0 );
 
             StringBuilder content = new StringBuilder();
             foreach ( Route route in routes ) {
@@ -100,7 +100,7 @@ namespace WalkingDinner.PDF {
                         Course = ( route.CourseIndex == 0 ) ? "'start'" : ( route.CourseIndex ).ToString(),
                         To = route.To.GetName(),
                         Street = route.To.Address.GetAsLine(),
-                        Time = baseTime.AddMinutes( 30 * route.CourseIndex ).ToString( "HH:mm" )
+                        Time = startTime.AddMinutes( 30 * route.CourseIndex ).ToString( "HH:mm" )
                     } );
                 }
 
@@ -119,9 +119,9 @@ namespace WalkingDinner.PDF {
             return document;
         }
 
-        public static byte[] Generate( List<Route> routes, int courseCount ) {
+        public static byte[] Generate( List<Route> routes, int courseCount, DateTime startTime ) {
 
-            string HTML = GenerateHTML( routes, courseCount );
+            string HTML = GenerateHTML( routes, courseCount, startTime );
 
             var globalSettings = new GlobalSettings
             {

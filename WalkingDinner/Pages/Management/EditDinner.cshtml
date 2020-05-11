@@ -94,22 +94,67 @@
     </table>
 
     <h3>Beheer</h3>
-    <form class="form-horizontal" method="post" asp-page-handler="Manage">
+    <form class="form-horizontal" method="post" asp-page-handler="Edit">
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+        <h4>Het diner</h4>
+        <hr />
+
         <div class="form-group">
-            <label asp-for="Couple.Dinner.Title" class="col-sm-2 control-label">Titel</label>
+            <label asp-for="Couple.Dinner.Title" class="control-label"></label>
             <input asp-for="Couple.Dinner.Title" class="form-control" />
             <span asp-validation-for="Couple.Dinner.Title" class="text-danger"></span>
         </div>
 
-        @{ #warning Edit dinner }
+        <div class="form-group">
+            <label asp-for="Couple.Dinner.Description" class="control-label"></label>
+            <textarea asp-for="Couple.Dinner.Description" class="form-control"></textarea>
+            <span asp-validation-for="Couple.Dinner.Description" class="text-danger"></span>
+        </div>
 
-        @if ( !string.IsNullOrEmpty( (string)ViewData[ "ManageResult" ] ) ) {
+
+        <h4>Verzamelpunt</h4>
+        <hr />
+
+        <partial name="_AddressView" for="Couple.Dinner.Address" />
+
+        <h4>Data</h4>
+        <hr />
+        <div>
+            <dl>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor( model => model.Couple.Dinner.SubscriptionStop )
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor( model => model.Couple.Dinner.SubscriptionStop )
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor( model => model.Couple.Dinner.Date )
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor( model => model.Couple.Dinner.Date )
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor( model => model.Couple.Dinner.Price )
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor( model => model.Couple.Dinner.Price )
+                </dd>
+            </dl>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+
+
+        @if ( !string.IsNullOrEmpty( (string)ViewData[ "EditResult" ] ) ) {
 
             <div class="alert alert-primary">
-                @ViewData[ "ManageResult" ]
+                @ViewData[ "EditResult" ]
             </div>
         }
 

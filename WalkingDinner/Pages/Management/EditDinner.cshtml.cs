@@ -52,6 +52,11 @@ namespace WalkingDinner.Pages.Management {
                 return NotFound();
             }
 
+            if ( Couple.Dinner.SubscriptionStop < DateTime.Now ) {
+
+                return Redirect( ModelPath.Get<Management.OverviewModel>() );
+            }
+
             // Load the dinner itself, including other couples
             await Database.GetDinnerAsync( Couple.Dinner.ID );
 
@@ -103,6 +108,34 @@ namespace WalkingDinner.Pages.Management {
             Invite = null;
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostEdit() {
+
+            var dinnerData = Couple.Dinner;
+
+            Couple = await GetAuthorizedCouple();
+            if ( Couple == null ) {
+
+                return NotFound();
+            }
+            await Database.GetDinnerAsync( Couple.Dinner.ID );
+
+            if ( !ModelState.IsValid( "Couple.Dinner" ) ) {
+
+                return Page();
+            }
+
+            Couple.Dinner.Address.CopyFrom( dinnerData.Address );
+            Couple.Dinner.Title         = dinnerData.Title;
+            Couple.Dinner.Description   = dinnerData.Description;
+
+            await Database.SaveChangesAsync();
+
+            ViewData[ "EditResult" ] = $"De wijzigingen zijn opgeslagen.";
+
+            return Page();
+
         }
     }
 }

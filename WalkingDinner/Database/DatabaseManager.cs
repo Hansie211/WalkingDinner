@@ -53,6 +53,7 @@ namespace WalkingDinner.Database {
             Dinner dinner = await Database.Dinners.Include( o => o.Couples ).ThenInclude( o => o.PersonMain )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.PersonGuest )
                                                   .Include( o => o.Couples ).ThenInclude( o => o.Address )
+                                                  .Include( o => o.Address )
                                                   .SingleOrDefaultAsync( o => o.ID == Id );
             if ( dinner == null ) {
 

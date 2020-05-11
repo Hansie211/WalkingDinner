@@ -115,7 +115,7 @@ namespace WalkingDinner.Database {
                 return null;
             }
 
-            Couple couple = await Database.Couples.Include( o => o.Dinner )
+            Couple couple = await Database.Couples.Include( o => o.Dinner ).ThenInclude( o => o.Address )
                                                   .Include( o => o.PersonMain )
                                                   .Include( o => o.PersonGuest )
                                                   .Include( o => o.Address )
